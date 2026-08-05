@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Maps</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+    <div id="root">
+    <div class="flex flex-col" style="height: 100dvh; background: rgb(14, 11, 6); font-family: &quot;Crimson Pro&quot;, Georgia, serif;">
+        <header style="border-bottom: 1px solid rgb(42, 32, 16); background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6)); padding: 0px 24px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; justify-content: space-between; height: 64px;">
+                <div style="display: flex; align-items: center; gap: 14px;">
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, rgb(232, 171, 42), rgb(139, 90, 0)); box-shadow: rgba(200, 140, 20, 0.5) 0px 0px 12px; display: flex; align-items: center; justify-content: center; font-size: 18px;">
+                        ✦
+                    </div>
+                    <div>
+                        <div style="font-family: Cinzel, serif; font-size: 20px; font-weight: 700; color: rgb(232, 213, 163); letter-spacing: 0.08em; line-height: 1;">
+                            Cartomancer
+                        </div>
+                        <div style="font-family: Cinzel, serif; font-size: 10px; color: rgb(106, 90, 58); letter-spacing: 0.2em; text-transform: uppercase; line-height: 1.4;">
+                            Realm Atlas
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div style="flex: 1 1 0%; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px; gap: 48px;">
+            <div style="text-align: center;">
+                <div style="font-family: Cinzel, serif; font-size: 11px; letter-spacing: 0.3em; color: rgb(74, 58, 26); margin-bottom: 12px;">
+                    ✦ ✦ ✦
+                </div>
+                <h1 style="font-family: Cinzel, serif; font-size: 42px; font-weight: 700; color: rgb(232, 213, 163); letter-spacing: 0.06em; margin: 0px; line-height: 1.1;">
+                    Cartomancer
+                </h1>
+                <p style="font-family: Cinzel, serif; font-size: 13px; letter-spacing: 0.25em; color: rgb(106, 90, 58); margin: 8px 0px 0px; text-transform: uppercase;">
+                    Realm Atlas &amp; Point of Interest Marker
+                </p>
+                <div style="font-family: Cinzel, serif; font-size: 11px; letter-spacing: 0.3em; color: rgb(74, 58, 26); margin-top: 12px;">
+                    ✦ ✦ ✦
+                </div>
+            </div>
+            <div style="width: 100%; max-width: 520px; aspect-ratio: 4 / 3; border: 2px dashed rgb(42, 32, 16); border-radius: 6px; background: rgba(255, 255, 255, 0.01); display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: 0.25s; gap: 16px; position: relative; overflow: hidden;">
+                <div style="position: absolute; inset: 12px auto auto 12px; width: 20px; height: 20px; border-width: 1px medium medium 1px; border-style: solid none none solid; border-color: rgb(58, 42, 16) currentcolor currentcolor rgb(58, 42, 16);">
+                </div>
+                <div style="position: absolute; inset: 12px 12px auto auto; width: 20px; height: 20px; border-width: 1px 1px medium medium; border-style: solid solid none none; border-color: rgb(58, 42, 16) rgb(58, 42, 16) currentcolor currentcolor;">
+                </div>
+                <div style="position: absolute; inset: auto auto 12px 12px; width: 20px; height: 20px; border-width: medium medium 1px 1px; border-style: none none solid solid; border-color: currentcolor currentcolor rgb(58, 42, 16) rgb(58, 42, 16);">
+                </div>
+                <div style="position: absolute; inset: auto 12px 12px auto; width: 20px; height: 20px; border-width: medium 1px 1px medium; border-style: none solid solid none; border-color: currentcolor rgb(58, 42, 16) rgb(58, 42, 16) currentcolor;">
+
+                </div>
+                <div style="font-size: 48px; opacity: 0.3; transition: opacity 0.25s;">
+                    🗺
+                </div>
+                <div>
+                    <div style="font-family: Cinzel, serif; font-size: 15px; letter-spacing: 0.12em; color: rgb(106, 90, 58); text-align: center;">
+                        DRAG YOUR MAP HERE
+                    </div>
+                    <div style="font-family: &quot;Crimson Pro&quot;, Georgia, serif; font-size: 14px; color: rgb(74, 58, 26); text-align: center; margin-top: 4px;">
+                        or click to browse your charts
+                    </div>
+                </div>
+                <div style="font-family: &quot;Crimson Pro&quot;, Georgia, serif; font-size: 13px; color: rgb(58, 42, 10); font-style: italic;">
+                    PNG, JPG, WEBP — any image of your world
+                </div>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; max-width: 500px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(139, 26, 26);">
+                        ☠
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        DUNGEON
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(201, 148, 26);">
+                        ⚗
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        TAVERN
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(196, 169, 106);">
+                        ⌂
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        TOWN
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(232, 213, 163);">
+                        ★
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        LANDMARK
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(204, 51, 51);">
+                        ⚔
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        DANGER
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(106, 158, 181);">
+                        📜
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        QUEST
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(122, 106, 74);">
+                        ◆
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        CAVE
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(154, 138, 106);">
+                        ⌖
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        RUIN
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(74, 103, 65);">
+                        ▲
+                    </span>
+                    <span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        CAMP
+                    </span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 16px; color: rgb(122, 74, 154);">
+                        ⊕
+                    </span><span style="font-family: Cinzel, serif; font-size: 10px; letter-spacing: 0.1em; color: rgb(74, 58, 26);">
+                        PORTAL
+                    </span>
+                </div>
+            </div>
+        </div>
+        <input accept="image/*" type="file" style="display: none;">
+    </div>
+</div>
+</body>
+</html>
+
