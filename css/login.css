@@ -1,23 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Crimson+Pro:ital,wght@0,200..900;1,200..900&display=swap');
 
 *{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Monserrat', sans-serif;
+    font-family: 'Cinzel', serif;
+    /* font-weight: 600; */
 }
 
 body{
-    background-color: rgba(0, 0, 0, 0.795);
+    background: rgb(14, 11, 6);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     height: 100vh;
+    color: rgb(232, 213, 163);
+
 }
 
 .container{
-    background-color: #fff;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(255, 255, 255, 0.35);
     position: relative;
@@ -39,18 +42,18 @@ body{
 }
 
 .container a{
-    color: #333;
+    color: rgb(232, 213, 163);
     font-size: 13px;
     text-decoration: none;
     margin: 15px 0 10px;
 }
 
 .container button{
-    background-color: rgb(31, 115, 251);
-    color: #fff;
+    background: linear-gradient(rgb(232, 171, 42), rgb(139, 90, 0));
+    color: rgb(74, 58, 26);
     font-size: 12px;
     padding: 10px 45px;
-    border: 1px solid transparent;
+    border: none;
     border-radius: 8px;
     font-weight: 600;
     letter-spacing: 0.5px;
@@ -61,11 +64,11 @@ body{
 
 .container button.hidden{
     background-color: transparent;
-    border-color: #fff;
+    color: rgb(232, 213, 163);
 }
 
 .container form{
-    background-color: #fff;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -75,7 +78,8 @@ body{
 }
 
 .container input{
-    background-color: #eee;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));    
+    color: rgb(232, 213, 163);
     border: none;
     margin: 8px 0;
     padding: 10px 15px;
@@ -83,6 +87,10 @@ body{
     border-radius: 8px;
     width: 100%;
     outline: none;
+}
+
+.container input::placeholder{
+    color: rgb(156, 133, 86);
 }
 
 .form-container{
@@ -160,8 +168,8 @@ body{
 }
 
 .toggle{
-    background-color: rgba(31, 115, 251, 0.952);
-    color: #fff;
+    background: radial-gradient(circle at 35% 35%, rgb(232, 171, 42), rgb(139, 90, 0));
+    color: rgb(74, 58, 26);
     position: relative;
     left: -100%;
     height: 100%;
@@ -200,4 +208,12 @@ body{
 .toggle-right{
     right: 0;
     transform: translateX(0);
+}
+
+#login{
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
+}
+
+#register{
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
 }

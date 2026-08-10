@@ -5,13 +5,11 @@
 }
 
 body {
-    /* min-height: 100vh; */
-    /* display: flex; */
     align-items: center;
     justify-content: center;
     font-family: 'Crimson Pro', Georgia, serif;
     background: rgb(14, 11, 6);
-    color: #fff;
+    color: rgb(232, 213, 163);
     font-weight: 400;
 }
 
@@ -79,6 +77,18 @@ header{
     letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1.4;
+    /*TODO*/
+    /* display: none; */
+    cursor: pointer;
+}
+
+#sign-in-up a{
+    text-decoration: none;
+    color: rgb(156, 133, 86);
+}
+
+#sign-in-up a:hover{
+    text-decoration: underline;
 }
 
 #main{
@@ -157,10 +167,39 @@ header{
     border-color: rgb(58, 42, 16);
 }
 
+#world-icon{
+    font-size: 54px;
+    opacity: 0.3;
+    transition: opacity 0.25s;
+}
+
+.drop-zone__prompt{
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 20px;
+    letter-spacing: 0.12em;
+    color: rgb(110, 100, 65);
+    text-align: center;
+}
+
+#input-prompt{
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 16px;
+    color: rgb(100, 85, 53);
+    text-align: center;
+    margin-top: -10px;
+}
+
+#input-image-types{
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 15px;
+    color: rgb(95, 80, 48);
+    font-style: italic;
+}
+
 /* Эффект при перетаскивании файла над областью */
 .drop-zone--over {
     border-style: solid;
-    background-color: #f0fbf8;
+    background: rgba(255, 255, 255, 0.03);
 }
 
 /* Скрываем стандартный инпут */
@@ -178,11 +217,21 @@ header{
 }
 
 #reset-btn {
+    border: 0;
     padding: 8px 16px;
     cursor: pointer;
-    border: 1px solid #ccc;
+    color: rgb(167, 0, 0);
+    font-weight: 900;
+    font-size: 18px;
     border-radius: 6px;
-    background: #fff;
+    background: rgb(14, 11, 6);
+    /* box-shadow: 0px 0px 0px rgba(0, 0, 0, 0); */
+    transition: all 0.6s ease;
+}
+
+#reset-btn:hover{
+    box-shadow: 12px 12px 12px rgba(0, 0, 0, 1),
+    -5px -5px 5px rgb(25, 21, 9);
 }
 
 #image-wrapper {
@@ -190,9 +239,9 @@ header{
     width: 100%;
     border-radius: 12px;
     overflow: hidden;
-    background: #fff;
-    border: 1px solid #ddd;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 12px 12px 12px rgba(0, 0, 0, 1),
+    -7px -7px 7px rgb(25, 21, 9);
+    
 }
 
 #full-preview {
@@ -229,34 +278,120 @@ header{
 .marker-label {
     position: absolute;
     transform: translate(8px, -10px);
-    background: #fff;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 2px 6px;
     font-size: 14px;
     white-space: normal;
     width: 50%;
-    color: #333;
+    color: #FFF;
     cursor: context-menu;
     display: none;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: space-evenly;
+    z-index: 100;
 }
+
+.marker-label hr{
+    border: 1px solid rgb(232, 213, 163);
+}
+
 .marker-label.show {
     display: block;
+}
+
+.point-title{
+    width: 100%;
+    font-size: 20px;
+    text-align: center;
+    overflow-wrap: break-word;
+    color: rgb(232, 213, 163);
+}
+
+.point-description{
+    width: 100%;
+    font-size: 18px;
+    overflow-wrap: break-word;
+    color: rgb(232, 213, 163);
+
 }
 
 .popup {
     position: absolute;
     display: none;
     z-index: 10;
+    flex-wrap: wrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
     padding: 8px;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: rgb(0, 0, 0);
+    border: 1px solid #000;
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
+.popup button:not(#add-label-btn){
+    background: rgb(14, 11, 6);
+    border-radius: 50%;
+    margin: 2px;
+    border: 0;
+    cursor: pointer;
+}
+
+#title-input {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 16px;
+    text-align: center;
+    width: 80%; 
+    resize: none; 
+    justify-self: flex-start;
+    outline: none;
+    color: rgb(232, 213, 163);
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
+    border: rgb(14, 11, 6);
+    border-radius: 8px;
+}
+
+#title-input::placeholder{
+    color: rgb(156, 133, 86);
+}
+
+#description-input {
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 16px;
+    text-align: center;
+    resize: vertical;
+    overflow-y: auto;
+    line-height: 1.5;
+    width: 80%;
+    justify-self: flex-start;
+    outline: none;
+    
+    color: rgb(232, 213, 163);
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
+    border: rgb(14, 11, 6);
+    border-radius: 8px;
+}
+
+#description-input::placeholder{
+    color: rgb(156, 133, 86);
+}
+
+.countMax {
+    width: 20%; 
+    justify-self: flex-start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .popup.show {
-    display: block;
+    display: flex;
+    
 }
 
 .d-popup {
@@ -264,8 +399,8 @@ header{
     display: none;
     z-index: 10;
     padding: 8px;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: #000;
+    border: 1px solid #000;
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
@@ -275,19 +410,49 @@ header{
 }
 
 #add-label-btn {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: rgb(232, 213, 163);
+    letter-spacing: 0.2em;
     padding: 8px 12px;
+    margin-top: 2%;
     cursor: pointer;
     border: none;
     border-radius: 6px;
-    background: #009578;
-    color: #fff;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
 }
 
 #delete-label-btn {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 12px;
     padding: 8px 12px;
     cursor: pointer;
     border: none;
     border-radius: 6px;
-    background: #009578;
-    color: #fff;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
+    color: rgb(232, 213, 163);
+}
+
+#legend{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 500px;
+}
+
+.legend{
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.legend-text{
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    color: rgb(143, 123, 79);
+    
 }

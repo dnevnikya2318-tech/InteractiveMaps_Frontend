@@ -11,12 +11,34 @@ const addLabelBtn = document.getElementById('add-label-btn');
 const deletePopup = document.getElementById('delete-popup');
 const deleteLabelBtn = document.getElementById('delete-label-btn');
 
+// Label input counter logic
+const titleInput = document.getElementById('title-input');
+const titleInputCount = document.getElementById('title-input-count');
+const titleInputMaxChar = titleInput.maxLength;
+
+const descriptionInput = document.getElementById('description-input');
+const descriptionInputCount = document.getElementById('description-input-count');
+const descriptionInputMaxChar = descriptionInput.maxLength;
+
+titleInput.addEventListener('input', () => {
+    const remaining = titleInputMaxChar - titleInput.value.length;
+    titleInputCount.textContent = remaining;
+});
+
+descriptionInput.addEventListener('input', () => {
+    const remaining = descriptionInputMaxChar - descriptionInput.value.length;
+    descriptionInputCount.textContent = remaining;
+});
+
+
 
 
 class Point {
-    constructor(x, y) {
+    constructor(x, y, title, description) {
         this.X = x;
         this.Y = y;
+        this.Title = title;
+        this.Description = description;
     }
 }
 
@@ -50,7 +72,8 @@ function positionPopup(popupElement, x, y) {
 }
 
 function createMarker(point) {
-    const id = `point-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    // const id = `point-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const id = crypto.randomUUID();
 
     const marker = document.createElement('div');
     marker.className = 'marker';
@@ -59,17 +82,28 @@ function createMarker(point) {
     marker.style.top = `${point.Y}px`;
 
     const label = document.createElement('div');
+    const pointTitle = document.createElement('h1');
+    const pointDescription = document.createElement('p');
+    const hr = document.createElement('hr');
+    pointTitle.className = 'point-title';
+    pointDescription.className = 'point-description';
+    pointTitle.textContent = `${point.Title}`;
+    pointDescription.textContent = `${point.Description}`;
+    label.appendChild(pointTitle);
+    label.appendChild(hr);
+    label.appendChild(pointDescription);
+
+    
     label.className = 'marker-label';
     label.dataset.id = id;
-    label.textContent = `(${point.X}, ${point.Y})Чтобы изменить атрибут для каждого элемента определенного класса, найдите их с помощью querySelectorAll и используйте метод setAttribute в цикле.`;
     label.style.left = `${point.X}px`;
     label.style.top = `${point.Y + 10}px`;
     label.style.display = 'none';
 
     const showDeleteHandler = (e) => {
+        hidePopups();
         e.preventDefault();
         e.stopPropagation();
-
         selectedMarkerId = id;
 
         const rect = imageWrapper.getBoundingClientRect();
@@ -92,7 +126,7 @@ function createMarker(point) {
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        label.style.display = 'block';
+        label.style.display = 'flex';
 
         positionPopup(label, x, y);
         
@@ -189,9 +223,12 @@ fullPreview.addEventListener('click', (e) => {
 addLabelBtn.addEventListener('click', () => {
     if (!popupPoint) return;
 
-    const point = new Point(Math.round(popupPoint.x), Math.round(popupPoint.y));
+    const point = new Point(Math.round(popupPoint.x), Math.round(popupPoint.y), titleInput.value, descriptionInput.value);
 
     createMarker(point);
+
+    titleInput.value = '';
+    descriptionInput.value = '';
 
     hidePopups();
 });
