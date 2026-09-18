@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="css/login.css">
 
@@ -15,37 +15,30 @@
 <body>
     <div class="container" id="container">
         <div class="form-container sign-up">
-            <form>
+            <form id="registerForm">
                 <h1>Create Account</h1>
-                <!-- <div class="social-icons">
-                    <a href="#" class="icons"><i class="bx bxl-google"></i></a>
-                    <a href="#" class="icons"><i class="bx bxl-facebook"></i></a>
-                    <a href="#" class="icons"><i class="bx bxl-github"></i></a>
-                    <a href="#" class="icons"><i class="bx bxl-linkedin"></i></a>
-                </div> -->
                 <span>Register with E-mail</span>
-                <input type="text" placeholder="Name">
-                <input type="email" placeholder="Enter E-mail">
-                <input type="password" placeholder="Enter Password">
-                <button>Sign Up</button>
+                <input type="text" id="usernameRegister" placeholder="Username" required>
+                <input type="email" id="emailRegister" placeholder="Enter E-mail" required>
+                <input type="password" id="passwordRegister" placeholder="Enter Password" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                <button type="submit">Sign Up</button>
+                <p id="messageRegister"></p>
             </form>
+            
         </div>
 
         <div class="form-container sign-in">
-            <form>
+            <form id="loginForm">
                 <h1>Sign In</h1>
-                <!-- <div class="social-icons">
-                    <a href="#" class="icons"><i class="bx bxl-google"></i></a>
-                    <a href="#" class="icons"><i class="bx bxl-facebook"></i></a>
-                    <a href="#" class="icons"><i class="bx bxl-github"></i></a>
-                    <a href="#" class="icons"><i class="bx bxl-linkedin"></i></a>
-                </div> -->
                 <span>Login With E-mail & Password</span>
-                <input type="email" placeholder="Enter E-mail">
-                <input type="password" placeholder="Enter Password">
+                <input type="email" id="emailLogin" placeholder="Enter E-mail" required>
+                <input type="password" id="passwordLogin" placeholder="Enter Password" required>
                 <a href="#">Forget Password?</a>
-                <button>Sign In</button>
+                <button type="submit">Sign In</button>
+                <p id="messageLogin"></p>
             </form>
+            
         </div>
 
         <div class="toggle-container">

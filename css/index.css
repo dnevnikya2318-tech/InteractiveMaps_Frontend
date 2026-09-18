@@ -34,6 +34,12 @@ header{
     gap: 14px;
 }
 
+#header-right{
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
 #main-emblem{
     width: 36px;
     height: 36px;
@@ -69,7 +75,7 @@ header{
     display: none;
 }
 
-#sign-in-up{
+#logout-btn{
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 12px;
@@ -77,18 +83,26 @@ header{
     letter-spacing: 0.2em;
     text-transform: uppercase;
     line-height: 1.4;
-    /*TODO*/
-    /* display: none; */
     cursor: pointer;
 }
 
-#sign-in-up a{
+#logout-btn a{
     text-decoration: none;
     color: rgb(156, 133, 86);
 }
 
-#sign-in-up a:hover{
+#logout-btn a:hover{
     text-decoration: underline;
+}
+
+#user-info {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: rgb(156, 133, 86);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    line-height: 1.4;
 }
 
 #main{
@@ -209,7 +223,8 @@ header{
 
 #view-area {
     display: none;
-    width: min(90vw, 700px);
+    /* width: min(90vw, 700px); */
+    width: 99%;
 }
 
 .controls {
@@ -455,4 +470,8 @@ header{
     letter-spacing: 0.1em;
     color: rgb(143, 123, 79);
     
+}
+
+#protected-content {
+    display: none;
 }

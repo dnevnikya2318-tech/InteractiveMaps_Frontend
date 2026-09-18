@@ -19,6 +19,52 @@ const titleInputMaxChar = titleInput.maxLength;
 const descriptionInput = document.getElementById('description-input');
 const descriptionInputCount = document.getElementById('description-input-count');
 const descriptionInputMaxChar = descriptionInput.maxLength;
+const token = localStorage.getItem('authToken');
+
+document.addEventListener('DOMContentLoaded', () => {
+    const userInfoElement = document.getElementById('user-info');
+    const logoutBtn = document.getElementById('logout-btn');
+    // Authentification 
+    if (!token)
+    {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Getting data from token
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const payload = JSON.parse(jsonPayload);
+
+        const idKey = Object.keys(payload).find(key => key.includes('nameid'));
+        const userId = payload[idKey] || payload.sub || payload.id;
+
+        const nameKey = Object.keys(payload).find(key => key.endsWith('/name'));
+        const username = payload[nameKey] || payload.unique_name || payload.name || "User";
+
+        userInfoElement.innerText = `You are: ${username}`;
+    } catch (e) {
+        console.error('Error occured while reading token:', e);
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+    })
+
+})
+//globalToken
+
+
+
 
 titleInput.addEventListener('input', () => {
     const remaining = titleInputMaxChar - titleInput.value.length;
@@ -161,6 +207,17 @@ dropArea.addEventListener('drop', (e) => {
 
     if (e.dataTransfer.files.length) {
         const file = e.dataTransfer.files[0];
+        
+
+        const ownerId = getUserId(token);
+        console.log(ownerId);
+        const s3Data = s3Response(file);
+        console.log(s3Data.ImageUrl);
+        console.log(s3Data.ImageName);
+        // обратиться к контроллеру CreateImage для загрузки изображения в S3
+        // получить от S3 ссылку на изображение и название изображения
+        // Создать объект map
+        // Отправить объект в контроллер post
 
         if (file.type.startsWith('image/')) {
             const dataTransfer = new DataTransfer();
@@ -240,3 +297,50 @@ deleteLabelBtn.addEventListener('click', () => {
 
     hidePopups();
 });
+
+
+
+const getUserId = (token) => {
+    try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        const payload = JSON.parse(jsonPayload);
+
+        const idKey = Object.keys(payload).find(key => key.includes('nameid'));
+        const userId = payload[idKey] || payload.sub || payload.id;
+        return userId;
+    } catch (e) {
+        console.error('Error occured while reading token:', e);
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+        return;
+    }
+}
+
+const s3Response = async (fileObject) => {
+    const formData = new FormData();
+
+    formData.append('file', fileObject);
+
+    try {
+        const response = await fetch('http://localhost:5064/api/images/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        if (!response.ok){
+            const errorText = await response.text();
+            throw new Error('Unexpected error: ', errorText);
+        }
+
+        const data = await response.json();
+
+        return data;
+    } catch (error){
+        console.error('Error occured during upload.');
+    }
+}
