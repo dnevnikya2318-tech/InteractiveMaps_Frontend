@@ -201,25 +201,35 @@ dropArea.addEventListener('dragover', (e) => {
     });
 });
 
-dropArea.addEventListener('drop', (e) => {
+dropArea.addEventListener('drop', async (e) => {
     e.preventDefault();
     dropArea.classList.remove('drop-zone--over');
 
     if (e.dataTransfer.files.length) {
         const file = e.dataTransfer.files[0];
         
-
-        const ownerId = getUserId(token);
-        console.log(ownerId);
-        const s3Data = s3Response(file);
-        console.log(s3Data.ImageUrl);
-        console.log(s3Data.ImageName);
-        // обратиться к контроллеру CreateImage для загрузки изображения в S3
-        // получить от S3 ссылку на изображение и название изображения
-        // Создать объект map
-        // Отправить объект в контроллер post
+        
 
         if (file.type.startsWith('image/')) {
+            const ownerId = getUserId(token);
+
+            const s3Data = await s3Response(file);
+            
+            try {
+                const response = await fetch('http://localhost:5064/maps', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ownerId: ownerId, title: "My Map", isPublic: false, imagePath: s3Data.imageUrl, imageName: s3Data.imageName })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Unexpected error.');
+                }
+            } catch (error) {
+                console.error(error);
+            }
+
+            
             const dataTransfer = new DataTransfer();
             dataTransfer.items.add(file);
             fileInput.files = dataTransfer.files;

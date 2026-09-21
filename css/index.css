@@ -50,6 +50,11 @@ header{
     align-items: center;
     justify-content: center;
     font-size: 18px;
+    cursor: pointer;
+}
+
+#main-emblem:hover{
+    background: radial-gradient(circle at 35% 35%, rgb(232, 171, 42), rgb(232, 171, 42));
 }
 
 #site-title{
