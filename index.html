@@ -11,11 +11,18 @@
         <div class="flex flex-col">
             <header>
                 <div id="header-left">
-                    <div id="main-emblem">✦</div>
+                    <div class="menu-btn" id="main-emblem">✦</div>
                     <div>
                         <div id="site-title">Intermapcer</div>
                         <div id="site-subtitle">Realm Atlas</div>
                     </div>
+                    
+                </div>
+                <div id="header-mid">
+                    <form>
+                        <input id="mapTitleInput" type="text" placeholder="Map Title">
+                        <button type="submit" id="mapTitleSubmit">Update</button>
+                    </form>
                     
                 </div>
                 <div id="map-title">Map Title</div>
@@ -28,6 +35,10 @@
                 
                 
             </header>
+            <div class="overlay" id="overlay"></div>
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-content" id="sidebar-content"></div>
+            </div>
             <div id="main">
                 <div id="main-title">
                     <div id="stars-top">✦ ✦ ✦</div>
@@ -133,6 +144,20 @@
             </div>
 
             <script src="scripts/index.js"></script>
+        </div>
+    </div>
+    <div class="delete-popup-overlay" id="deletePopupOverlay">
+        <div class="delete-popup-content">
+            <h3>Are you sure?</h3>
+            <p>This action is irreversable. To confirm map removal, write word <strong>delete</strong> in form below:</p>
+
+            <form class="delete-popup-form" id="deletePopupForm">
+                <input type="text" id="confirmInput" placeholder="Input delete" autocomplete="off">
+                <div class="delete-popup-actions">
+                    <button type="button" class="btn delete-map-btn-cancel" id="deleteMapCancelBtn">Cancel</button>
+                    <button type="submit" class="btn delete-map-btn-confirm" id="deleteMapConfirmBtn" disabled>Confirm</button>
+                </div>
+            </form>
         </div>
     </div>
 </body>

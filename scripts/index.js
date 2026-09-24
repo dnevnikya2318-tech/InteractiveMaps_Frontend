@@ -21,9 +21,12 @@ const descriptionInputCount = document.getElementById('description-input-count')
 const descriptionInputMaxChar = descriptionInput.maxLength;
 const token = localStorage.getItem('authToken');
 
+let currMapId = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     const userInfoElement = document.getElementById('user-info');
     const logoutBtn = document.getElementById('logout-btn');
+    
     // Authentification 
     if (!token)
     {
@@ -61,10 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
     })
 
 })
-//globalToken
-
-
-
 
 titleInput.addEventListener('input', () => {
     const remaining = titleInputMaxChar - titleInput.value.length;
@@ -76,15 +75,22 @@ descriptionInput.addEventListener('input', () => {
     descriptionInputCount.textContent = remaining;
 });
 
-
-
-
 class Point {
     constructor(x, y, title, description) {
         this.X = x;
         this.Y = y;
         this.Title = title;
         this.Description = description;
+    }
+}
+class Map {
+    constructor(id, ownerId, title, isPublic, imagePath, imageName){
+        this.Id = id;
+        this.OwnerId = ownerId;
+        this.Title = title;
+        this.IsPublic = isPublic;
+        this.ImagePath = imagePath;
+        this.ImageName = imageName;
     }
 }
 
@@ -186,7 +192,7 @@ dropArea.addEventListener('click', () => fileInput.click());
 
 fileInput.addEventListener('change', () => {
     if (fileInput.files.length) {
-        showImage(fileInput.files[0]);
+        uploadMap(fileInput.files[0])
     }
 });
 
@@ -207,65 +213,66 @@ dropArea.addEventListener('drop', async (e) => {
 
     if (e.dataTransfer.files.length) {
         const file = e.dataTransfer.files[0];
-        
-        
 
-        if (file.type.startsWith('image/')) {
-            const ownerId = getUserId(token);
-
-            const s3Data = await s3Response(file);
-            
-            try {
-                const response = await fetch('http://localhost:5064/maps', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ ownerId: ownerId, title: "My Map", isPublic: false, imagePath: s3Data.imageUrl, imageName: s3Data.imageName })
-                });
-
-                if (!response.ok) {
-                    throw new Error('Unexpected error.');
-                }
-            } catch (error) {
-                console.error(error);
-            }
-
-            
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            fileInput.files = dataTransfer.files;
-            showImage(file);
-        }
+        uploadMap(file);
     }
 });
 
-function showImage(file) {
-    const reader = new FileReader();
-    
-    reader.onload = () => {
-        // 1. Записываем base64-строку в src картинки
-        fullPreview.src = reader.result;
+function showMap(filePath) {
+    fullPreview.src = filePath;
 
-        // 2. Скрываем зону загрузки и показываем зону просмотра
-        mainTitle.style.display = 'none';
-        dropArea.style.display = 'none';
-        viewArea.style.display = 'block';
-    };
-
-    reader.readAsDataURL(file);
+    mainTitle.style.display = 'none';
+    dropArea.style.display = 'none';
+    viewArea.style.display = 'block';
 }
 
-// Возврат к загрузке при клике на "Отмена"
-resetBtn.addEventListener('click', () => {
+async function showTitle() {
+    const response = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    });
+    const mapTitleInput = document.getElementById('mapTitleInput');
+    const mapTitleSubmit = document.getElementById('mapTitleSubmit');
+    map = await response.json();
+    console.log(map.title);
+
+    mapTitleInput.style.visibility = 'visible';
+    mapTitleInput.value = map.title;
+    mapTitleSubmit.addEventListener('submit', async () => {
+        //TO CONTINUE
+        try {
+            const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            oldMap = await oldResponse.json();
+            const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ownerId: oldMap.ownerId, title: mapTitleInput.value, isPublic: oldMap.isPublic, imagePath: oldMap.imagePath, imageName: oldMap.imageName });
+            })
+        } catch })
+    
+}
+function hideTitle() {
+    mapTitleInput.style.visibility = 'hidden';
+    mapTitleInput.value = '';
+}
+function resetMap() {
     fileInput.value = ''; // Очищаем выбранный файл в инпуте
     fullPreview.src = ''; // Очищаем превью
     markersLayer.innerHTML = '';
+    currMapId = null;
     hidePopups();
-
+    hideTitle();
+    
     // Переключаем видимость обратно
     viewArea.style.display = 'none';
     mainTitle.style.display = 'block';
     dropArea.style.display = 'flex';
-});
+}
+// Возврат к загрузке при клике на "Отмена"
+resetBtn.addEventListener('click', () => resetMap());
 
 fullPreview.addEventListener('contextmenu', (e) => {
     e.preventDefault();
@@ -353,4 +360,147 @@ const s3Response = async (fileObject) => {
     } catch (error){
         console.error('Error occured during upload.');
     }
+}
+
+//sidebar logic
+const menuBtn = document.getElementById('main-emblem');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+
+function toggleMenu() {
+    sidebar.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function closeMenu() {
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+}
+
+menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+    loadMapsList(getUserId(token));
+});
+
+async function loadMapsList(userId) {
+    const sidebarContent = document.getElementById('sidebar-content');
+
+    try {
+        const response = await fetch(`http://localhost:5064/maps/user/${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Connection error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        sidebarContent.innerHTML = '';
+
+        data.forEach(element => {
+            // Add Title item
+            const div = document.createElement('div');
+            div.textContent = element.title;
+            div.Id = element.id;
+            div.addEventListener('click', () => {
+                showMap(element.imagePath);
+                currMapId = div.Id;
+                showTitle();
+            });
+            sidebarContent.append(div);
+            // Add Delete Button item
+            const delButton = document.createElement('button');
+            delButton.textContent = '🗑';
+            delButton.addEventListener('click', () => deleteMap(element.id, element.imageName));
+            sidebarContent.append(delButton);
+        });
+
+    } catch (error) {
+        console.error("Failed to load maps: ", error);
+    }
+    
+}
+
+async function uploadMap(file) {
+    if (file.type.startsWith('image/')) {
+        const ownerId = getUserId(token);
+
+        const s3Data = await s3Response(file);
+        
+        try {
+            const response = await fetch('http://localhost:5064/maps', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ownerId: ownerId, title: "My Map", isPublic: false, imagePath: s3Data.imageUrl, imageName: s3Data.imageName })
+            });
+            if (!response.ok) {
+                throw new Error('Unexpected error.');
+            }
+            currMapId = await response.json();
+        } catch (error) {
+            console.error(error);
+        }
+        showMap(s3Data.imageUrl);
+        showTitle();
+    }
+}
+
+overlay.addEventListener('click', closeMenu);
+
+
+// Map delete popup logic
+async function deleteMap(id, imageName) {
+    const popupOverlay = document.getElementById('deletePopupOverlay');
+    const cancelBtn = document.getElementById('deleteMapCancelBtn');
+    const confirmInput = document.getElementById('confirmInput');
+    const confirmBtn = document.getElementById('deleteMapConfirmBtn');
+    const deleteForm = document.getElementById('deletePopupForm');
+
+    closeMenu();
+
+    popupOverlay.classList.add('active');
+    confirmInput.focus();
+
+    function closePopup() {
+        popupOverlay.classList.remove('active');
+        deleteForm.reset();
+        confirmBtn.disabled = true;
+    }
+
+    cancelBtn.addEventListener('click', closePopup);
+
+    popupOverlay.addEventListener('click', (e) => {
+        if (e.target === popupOverlay) {
+            closePopup();
+        }
+    });
+
+    confirmInput.addEventListener('input', (e) => {
+        if (e.target.value.trim() === 'delete') {
+            confirmBtn.disabled = false;
+        } else {
+            confirmBtn.disabled = true;
+        }
+    });
+
+    deleteForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        if (confirmInput.value.trim() === 'delete') {
+            confirmBtn.disabled = true;
+            await fetch(`http://localhost:5064/api/images/${imageName}`, {
+                method: 'DELETE'
+            });
+            await fetch(`http://localhost:5064/maps/${id}`, {
+                method: 'DELETE'
+            });
+            resetMap();
+            closePopup();
+        }
+    })
+
 }
