@@ -124,7 +124,6 @@ function positionPopup(popupElement, x, y) {
 }
 
 function createMarker(point) {
-    // const id = `point-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const id = crypto.randomUUID();
 
     const marker = document.createElement('div');
@@ -232,14 +231,16 @@ async function showTitle() {
         headers: { 'Content-Type': 'application/json' }
     });
     const mapTitleInput = document.getElementById('mapTitleInput');
-    const mapTitleSubmit = document.getElementById('mapTitleSubmit');
+    const mapTitleForm = document.getElementById('mapTitleForm');
     map = await response.json();
     console.log(map.title);
 
     mapTitleInput.style.visibility = 'visible';
     mapTitleInput.value = map.title;
-    mapTitleSubmit.addEventListener('submit', async () => {
-        //TO CONTINUE
+    mapTitleForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        mapTitleInput.blur();
+        
         try {
             const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
                 method: 'GET',
@@ -248,10 +249,16 @@ async function showTitle() {
             oldMap = await oldResponse.json();
             const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ownerId: oldMap.ownerId, title: mapTitleInput.value, isPublic: oldMap.isPublic, imagePath: oldMap.imagePath, imageName: oldMap.imageName });
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                 },
+                body: JSON.stringify({ ownerId: oldMap.ownerId, title: mapTitleInput.value, isPublic: oldMap.isPublic, imagePath: oldMap.imagePath, imageName: oldMap.imageName })
             })
-        } catch })
+        } catch (error) {
+            console.error("Error occured while updating maps title: ", error);
+            return;
+        }})
     
 }
 function hideTitle() {
@@ -492,11 +499,11 @@ async function deleteMap(id, imageName) {
 
         if (confirmInput.value.trim() === 'delete') {
             confirmBtn.disabled = true;
-            await fetch(`http://localhost:5064/api/images/${imageName}`, {
-                method: 'DELETE'
-            });
             await fetch(`http://localhost:5064/maps/${id}`, {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                } 
             });
             resetMap();
             closePopup();
