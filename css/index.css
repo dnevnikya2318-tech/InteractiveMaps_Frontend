@@ -442,6 +442,21 @@ header{
     cursor: pointer;
 }
 
+#popupFirstRow {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+#popupSecondRow {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
+
 #title-input {
     font-family: 'Crimson Pro', Georgia, serif;
     font-size: 16px;
@@ -489,9 +504,62 @@ header{
     align-items: center;
 }
 
+#sizePreviewContainer {
+    width: auto;
+    height: 35px;
+    border: 2px solid rgb(156, 133, 86);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sizePreview {
+    background: rgb(14, 11, 6);
+    color: rgb(139, 26, 26);
+    width: 25px;
+    height: 25px;
+    font-size: 16px;
+    border-radius: 50%;
+    margin: 2px;
+    text-align: center;
+    align-content: center;
+}
+
+#sizeChanger {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    border: 2px solid rgb(156, 133, 86);
+}
+.size-btn{
+    background: transparent;
+    background-color: transparent;
+    color: rgb(156, 133, 86);
+    border-style: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 20px;
+    font-family: 'Crimson Pro', Georgia, serif;
+}
+.size-btn:hover{
+    color: #fff;
+}
+#sizeResult{
+    background-color: transparent;
+    color: rgb(156, 133, 86);
+    border-style: none;
+    resize: none;
+    width: 25px;
+    height: 25px;
+    font-size: 20px;
+    align-content: center;
+    text-align: center;
+    font-weight: bold;
+    font-family: 'Crimson Pro', Georgia, serif;
+}
+
 .popup.show {
     display: flex;
-    
 }
 
 .d-popup {
@@ -659,3 +727,76 @@ header{
 #mapTitleSubmit {
     visibility: hidden;
 }
+
+.upload-mark-image-container{
+    position: relative;
+    width: 2.5cm;
+    height: 2.5cm;
+    margin-left: 5px;
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.upload-mark-image-box{
+    width: 100%;
+    height: 100%;
+    border: 2px dashed rgb(42, 32, 16);
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.01);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    box-sizing: border-box;
+}
+.upload-mark-image-box:hover{
+    border-color: rgb(58, 44, 22);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.upload-plus-icon{
+    font-size: 32px;
+    color: rgb(232, 213, 163);
+    user-select: none;
+}
+.preview-mark-image{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+.mark-image-input{
+    display: none;
+}
+.remove-mark-image-btn{
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 28px;
+    height: 28px;
+    background-color: rgb(14, 11, 6);
+    border: 1px solid rgb(42, 32, 16);
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    z-index: 20;
+}
+
+.remove-mark-image-btn:hover{
+    background-color: rgb(26, 21, 9);
+}
+
+.remove-mark-image-btn::before, .remove-mark-image-btn::after{
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+.remove-mark-image-btn::before { transform: rotate(45deg); }
+.remove-mark-image-btn::after { transform: rotate(-45deg); }

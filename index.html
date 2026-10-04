@@ -69,7 +69,7 @@
                         <img id="full-preview" src="" alt="Просмотр">
                         <div id="markers-layer"></div>
                         <div id="label-popup" class="popup">
-                            <div>
+                            <div id="popupFirstRow">
                                 <button type="button" style="font-size: 16px; color: rgb(139, 26, 26); width: 25px; height: 25px;">☠</button>
                                 <button type="button" style="font-size: 16px; color: rgb(201, 148, 26); width: 25px; height: 25px;">⚗</button>
                                 <button type="button" style="font-size: 16px; color: rgb(196, 169, 106); width: 25px; height: 25px;">⌂</button>
@@ -80,8 +80,26 @@
                                 <button type="button" style="font-size: 18px; color: rgb(106, 158, 181); font-weight: 500; width: 25px; height: 25px;">⌖</button>
                                 <button type="button" style="font-size: 16px; color: rgb(74, 103, 65); width: 25px; height: 25px;">▲</button>
                                 <button type="button" style="font-size: 16px; color: rgb(122, 74, 154); width: 25px; height: 25px;">⊕</button>
+                                <div>
+                                    <div id="sizePreviewContainer">
+                                        <div id="sizePreview">☠</div>
+                                    </div>
+                                    <div id="sizeChanger">
+                                        <button class="size-btn" id="sizeDecrement">–</button>
+                                        <textarea readonly id="sizeResult">16</textarea>
+                                        <button class="size-btn" id="sizeIncrement">+</button>
+                                    </div>
+                                </div>
+                                <div class="upload-mark-image-container">
+                                    <div class="remove-mark-image-btn" id="removeMarkImageBtn" title="Remove image"></div>
+                                    <div class="upload-mark-image-box" id="uploadMarkImageBox">
+                                        <span class="upload-plus-icon" id="uploadPlusIcon">+</span>
+                                        <img src="" alt="Preview" class="preview-mark-image" id="previewMarkImage">
+                                    </div>
+                                    <input type="file" id="markImageInput" class="mark-image-input" accept="image/*">
+                                </div>
                             </div>
-                            <div style="width: 100%; display: flex; margin-bottom: 2%;">
+                            <div id="popupSecondRow" style="width: 100%; display: flex; margin-bottom: 2%;">
                                 <textarea id="title-input" maxlength="100" placeholder="Title..." required></textarea>
                                 <div class="countMax" style="width: 20%; justify-self: flex-start;"><p><span id="title-input-count">100</span>/100</p></div>
                             </div>
@@ -89,8 +107,7 @@
                                 <textarea id="description-input" maxlength="500" rows="3" placeholder="Description..."></textarea>
                                 <div class="countMax"><span id="description-input-count">500</span>/500</div>
                             </div>
-                            
-                            <button id="add-label-btn" type="button">Add point</button>
+                            <button id="add-label-btn" type="button">Add point</button>                            
                         </div>
                         <div id="delete-popup" class="d-popup">
                             <button id="delete-label-btn" type="button">Delete point</button>

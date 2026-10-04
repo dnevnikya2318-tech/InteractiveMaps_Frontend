@@ -22,6 +22,7 @@ const descriptionInputMaxChar = descriptionInput.maxLength;
 const token = localStorage.getItem('authToken');
 
 let currMapId = null;
+let currMarkImage = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const userInfoElement = document.getElementById('user-info');
@@ -76,13 +77,22 @@ descriptionInput.addEventListener('input', () => {
 });
 
 class Point {
-    constructor(x, y, title, description) {
-        this.X = x;
-        this.Y = y;
+    constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
+        this.Id = id;
+        this.MapId = mapId;
         this.Title = title;
         this.Description = description;
+        this.X = x;
+        this.Y = y;
+        this.Size = size;
+        this.MarkType = markType;
+        this.ImagePath = imagePath;
+        this.ImageName = imageName;
     }
 }
+
+// TO DELETE
+// Проверить, необходим ли вообще этот класс, потому что он, кажется нигде не используется
 class Map {
     constructor(id, ownerId, title, isPublic, imagePath, imageName){
         this.Id = id;
@@ -123,7 +133,16 @@ function positionPopup(popupElement, x, y) {
     popupElement.style.top = `${top}px`;
 }
 
+// TO UPDATE
+// функции передаётся объект класса Point(x, y, title, description)
+// При вызове функция создаёт на карте маркеры и соответствующие им описания
+// TODO:
+// Изменить наполнение html элементов в соответствии с новыми полями класса Point
+// Добавить секцию с изображением, которое загружается напрямую из S3
 function createMarker(point) {
+    // создание уникального идентификатора
+    // Изменить, так как должно происходить на бэкенде при создании сущности.
+    // считывание с нового поля Id в Point???
     const id = crypto.randomUUID();
 
     const marker = document.createElement('div');
@@ -151,6 +170,8 @@ function createMarker(point) {
     label.style.top = `${point.Y + 10}px`;
     label.style.display = 'none';
 
+    // TO UPDATE
+    // Добавить кнопку UPDATE 
     const showDeleteHandler = (e) => {
         hidePopups();
         e.preventDefault();
@@ -169,7 +190,7 @@ function createMarker(point) {
 
     marker.addEventListener('contextmenu', showDeleteHandler);
     label.addEventListener('contextmenu', showDeleteHandler);
-    // Показывает координаты точки при нажатии на неё
+    // Показывает данные точки при нажатии на неё
     marker.addEventListener('click', (e) => {
         hidePopups();
         e.stopPropagation();
@@ -217,12 +238,22 @@ dropArea.addEventListener('drop', async (e) => {
     }
 });
 
+// TO UPDATE
+// Добавить вызов функции createMarker для всех полученных маркеров из json
 function showMap(filePath) {
     fullPreview.src = filePath;
 
     mainTitle.style.display = 'none';
     dropArea.style.display = 'none';
     viewArea.style.display = 'block';
+
+    const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    });
+
+    response.forEach(element => {
+
 }
 
 async function showTitle() {
@@ -301,19 +332,71 @@ fullPreview.addEventListener('click', (e) => {
     hidePopups();
 });
 
-addLabelBtn.addEventListener('click', () => {
+addLabelBtn.addEventListener('click', async () => {
     if (!popupPoint) return;
 
-    const point = new Point(Math.round(popupPoint.x), Math.round(popupPoint.y), titleInput.value, descriptionInput.value);
+    const markImageName = null;
+    const markImagePath = null;
+    if (currMarkImage != null)
+    {
+        const imageUploadResponse = await s3Response(currMarkImage);
+        markImageName = imageUploadResponse.imageName;
+        markImagePath = imageUploadResponse.imageUrl;
+    }
 
-    createMarker(point);
+    try {
+        const response = await fetch('http://localhost:5064/landmarks', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                mapId: currMapId, 
+                title: titleInput.value, 
+                description: descriptionInput.value, 
+                x: Math.round(popupPoint.x),
+                y: Math.round(popupPoint.y),
+                size: parseInt(sizeResult.textContent, 10),
+                markType: sizePreview.textContent,
+                imagePath: markImagePath, 
+                imageName: markImageName })
+        });
+        if (!response.ok) {
+            throw new Error('Unexpected error.');
+        }
+        markId = await response.json();
 
-    titleInput.value = '';
-    descriptionInput.value = '';
+        const point = new Point(
+            markId,
+            currMapId, 
+            titleInput.value, 
+            descriptionInput.value, 
+            Math.round(popupPoint.x), 
+            Math.round(popupPoint.y), 
+            parseInt(sizeResult.textContent, 10), 
+            sizePreview.textContent,
+            markImagePath,
+            markImageName
+        );
 
-    hidePopups();
+        createMarker(point);
+
+        titleInput.value = '';
+        descriptionInput.value = '';
+
+        hidePopups();
+    } catch (error) {
+        console.error(error);
+    }
+
+
+    
+    
 });
 
+// TO UPDATE
+// Добавить DELETE запрос в базу данных
 deleteLabelBtn.addEventListener('click', () => {
     if (!selectedMarkerId) return;
 
@@ -353,6 +436,9 @@ const s3Response = async (fileObject) => {
     try {
         const response = await fetch('http://localhost:5064/api/images/upload', {
             method: 'POST',
+            headers: {
+                    'Authorization': `Bearer ${token}`
+                },
             body: formData
         });
 
@@ -510,4 +596,94 @@ async function deleteMap(id, imageName) {
         }
     })
 
+}
+
+// Mark change logic
+const sizeIncrement = document.getElementById("sizeIncrement");
+const sizeDecrement = document.getElementById("sizeDecrement");
+const sizeResult = document.getElementById("sizeResult");
+const sizePreview = document.getElementById("sizePreview");
+
+sizeIncrement.addEventListener('click', () => {
+    let currentFontSize = parseInt(sizeResult.textContent, 10);
+    
+    if(currentFontSize < 25) {
+        currentFontSize++;
+
+        sizeResult.textContent = currentFontSize;
+
+        sizePreview.style.width = currentFontSize + 9 + 'px';
+        sizePreview.style.height = currentFontSize + 9 + 'px';
+        sizePreview.style.fontSize = currentFontSize + 'px';
+
+    }
+})
+
+sizeDecrement.addEventListener('click', () => {
+    let currentFontSize = parseInt(sizeResult.textContent, 10);
+    
+    if(currentFontSize > 10) {
+        currentFontSize--;
+
+        sizeResult.textContent = currentFontSize;
+
+        sizePreview.style.width = currentFontSize + 9 + 'px';
+        sizePreview.style.height = currentFontSize + 9 + 'px';
+        sizePreview.style.fontSize = currentFontSize + 'px';
+
+    }
+})
+
+// Mark image upload logic
+const uploadMarkImageBox = document.getElementById('uploadMarkImageBox');
+const markImageInput = document.getElementById('markImageInput');
+const previewMarkImage = document.getElementById('previewMarkImage');
+const uploadPlusIcon = document.getElementById('uploadPlusIcon');
+const removeMarkImageBtn = document.getElementById('removeMarkImageBtn');
+
+// Box click opens file explorer
+uploadMarkImageBox.addEventListener('click', () => {
+    if (markImageInput.files.length === 0) {
+        markImageInput.click();
+    }
+});
+
+// 2. 
+markImageInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            previewMarkImage.src = e.target.result;
+            previewMarkImage.style.display = 'block';
+            uploadPlusIcon.style.display = 'none';
+            removeMarkImageBtn.style.display = 'flex';
+            uploadMarkImageBox.style.borderStyle = 'solid';
+        }
+
+        reader.readAsDataURL(file);
+    }
+});
+
+// 3. Image removal logic
+removeMarkImageBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+
+    markImageInput.value = '';
+    previewMarkImage.src = '';
+    previewMarkImage.style.display = 'none';
+    uploadPlusIcon.style.display = 'block';
+    removeMarkImageBtn.style.display = 'none';
+    uploadMarkImageBox.style.borderStyle = 'dashed';
+});
+
+function removeMarkImage () {
+    markImageInput.value = '';
+    previewMarkImage.src = '';
+    previewMarkImage.style.display = 'none';
+    uploadPlusIcon.style.display = 'block';
+    removeMarkImageBtn.style.display = 'none';
+    uploadMarkImageBox.style.borderStyle = 'dashed';
 }
