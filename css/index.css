@@ -28,19 +28,19 @@ header{
     height: 64px;
 }
 
-#header-left{
+#headerLeft{
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
-#header-right{
+#headerRight{
     display: flex;
     align-items: center;
     gap: 14px;
 }
 
-#main-emblem{
+#mainEmblem{
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -53,7 +53,7 @@ header{
     cursor: pointer;
 }
 
-#main-emblem:hover{
+#mainEmblem:hover{
     background: radial-gradient(circle at 35% 35%, rgb(232, 171, 42), rgb(232, 171, 42));
 }
 
@@ -137,7 +137,7 @@ header{
     border-style: none;
 }
 
-#site-title{
+#siteTitle{
     font-family: 'Cinzel', serif;
     font-size: 20px;
     font-weight: 700;
@@ -146,7 +146,7 @@ header{
     line-height: 1;
 }
 
-#site-subtitle{
+#siteSubtitle{
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 12px;
@@ -156,11 +156,11 @@ header{
     line-height: 1.4;
 }
 
-#map-title{
+#mapTitle{
     display: none;
 }
 
-#logout-btn{
+#logoutBtn{
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 12px;
@@ -171,16 +171,16 @@ header{
     cursor: pointer;
 }
 
-#logout-btn a{
+#logoutBtn a{
     text-decoration: none;
     color: rgb(156, 133, 86);
 }
 
-#logout-btn a:hover{
+#logoutBtn a:hover{
     text-decoration: underline;
 }
 
-#user-info {
+#userInfo {
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 12px;
@@ -200,12 +200,12 @@ header{
     gap: 48px;
 }
 
-#main-title{
+#mainTitle{
     text-align: center;
     display: block;
 }
 
-#main-title h1{
+#mainTitle h1{
     font-family: 'Cinzel', serif;
     font-size: 42px;
     font-weight: 700;
@@ -215,7 +215,7 @@ header{
     line-height: 1.1;
 }
 
-#main-title p{
+#mainTitle p{
     font-family: 'Cinzel', serif;
     font-size: 13px;
     letter-spacing: 0.25em;
@@ -223,7 +223,7 @@ header{
     margin-bottom: 12px;
 }
 
-#stars-top{
+#starsTop{
     font-family: 'Cinzel', serif;
     font-size: 11px;
     letter-spacing: 0.3em;
@@ -231,7 +231,7 @@ header{
     margin-bottom: 12px;
 }
 
-#stars-bottom{
+#starsBottom{
     font-family: 'Cinzel', serif;
     font-size: 11px;
     letter-spacing: 0.3em;
@@ -266,7 +266,7 @@ header{
     border-color: rgb(58, 42, 16);
 }
 
-#world-icon{
+#worldIcon{
     font-size: 54px;
     opacity: 0.3;
     transition: opacity 0.25s;
@@ -280,7 +280,7 @@ header{
     text-align: center;
 }
 
-#input-prompt{
+#inputPrompt{
     font-family: 'Crimson Pro', Georgia, serif;
     font-size: 16px;
     color: rgb(100, 85, 53);
@@ -288,7 +288,7 @@ header{
     margin-top: -10px;
 }
 
-#input-image-types{
+#inputImageTypes{
     font-family: 'Crimson Pro', Georgia, serif;
     font-size: 15px;
     color: rgb(95, 80, 48);
@@ -306,9 +306,8 @@ header{
     display: none;
 }
 
-#view-area {
+#viewArea {
     display: none;
-    /* width: min(90vw, 700px); */
     width: 99%;
 }
 
@@ -316,7 +315,7 @@ header{
     margin-bottom: 12px;
 }
 
-#reset-btn {
+#resetBtn {
     border: 0;
     padding: 8px 16px;
     cursor: pointer;
@@ -329,12 +328,12 @@ header{
     transition: all 0.6s ease;
 }
 
-#reset-btn:hover{
+#resetBtn:hover{
     box-shadow: 12px 12px 12px rgba(0, 0, 0, 1),
     -5px -5px 5px rgb(25, 21, 9);
 }
 
-#image-wrapper {
+#imageWrapper {
     position: relative;
     width: 100%;
     border-radius: 12px;
@@ -344,15 +343,13 @@ header{
     
 }
 
-#full-preview {
+#fullPreview {
     display: block;
     width: 100%;
-    /* max-height: 70vh; */
-    /* object-fit: contain; */
     user-select: none;
 }
 
-#markers-layer {
+#markersLayer {
     position: absolute;
     inset: 0;
     pointer-events: none;
@@ -367,19 +364,21 @@ header{
     position: absolute;
     width: 6px;
     height: 6px;
-    background: #ff4d4f;
-    border: 1px solid #fff;
+    background: rgb(14, 11, 6);
+    border: 1px solid rgb(100, 85, 53);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
     cursor: context-menu;
+    justify-content: center;
+    text-align: center;
 }
 
 .marker-label {
     position: absolute;
     transform: translate(8px, -10px);
     background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
-    border: 1px solid #ddd;
+    border: 1px solid rgb(100, 85, 53);
     border-radius: 4px;
     padding: 2px 6px;
     font-size: 14px;
@@ -434,14 +433,6 @@ header{
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-.popup button:not(#add-label-btn){
-    background: rgb(14, 11, 6);
-    border-radius: 50%;
-    margin: 2px;
-    border: 0;
-    cursor: pointer;
-}
-
 #popupFirstRow {
     display: flex;
     justify-content: center;
@@ -457,7 +448,7 @@ header{
     align-items: center;
 }
 
-#title-input {
+#titleInput {
     font-family: 'Crimson Pro', Georgia, serif;
     font-size: 16px;
     text-align: center;
@@ -471,11 +462,11 @@ header{
     border-radius: 8px;
 }
 
-#title-input::placeholder{
+#titleInput::placeholder{
     color: rgb(156, 133, 86);
 }
 
-#description-input {
+#descriptionInput {
     font-family: 'Crimson Pro', Georgia, serif;
     font-size: 16px;
     text-align: center;
@@ -492,7 +483,7 @@ header{
     border-radius: 8px;
 }
 
-#description-input::placeholder{
+#descriptionInput::placeholder{
     color: rgb(156, 133, 86);
 }
 
@@ -577,7 +568,7 @@ header{
     display: block;
 }
 
-#add-label-btn {
+#addLabelBtn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 12px;
@@ -591,7 +582,33 @@ header{
     background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
 }
 
-#delete-label-btn {
+#putLabelBtn {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 12px;
+    color: rgb(232, 213, 163);
+    letter-spacing: 0.2em;
+    padding: 8px 12px;
+    margin-top: 2%;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
+}
+
+#deleteLabelBtn {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    border: none;
+    border-radius: 6px;
+    background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
+    color: rgb(232, 213, 163);
+}
+
+#updateLabelBtn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 12px;
@@ -800,3 +817,26 @@ header{
 }
 .remove-mark-image-btn::before { transform: rotate(45deg); }
 .remove-mark-image-btn::after { transform: rotate(-45deg); }
+
+.mark-type-btn{
+    font-size: 16px;
+    width: 25px; 
+    height: 25px;
+    background: rgb(14, 11, 6);
+    border-radius: 50%;
+    margin: 2px;
+    border: 0;
+    cursor: pointer;
+}
+.mark-type-btn:hover{
+    background: rgb(26, 21, 9);
+}
+#markType1{ color: rgb(139, 26, 26); }
+#markType2{ color: rgb(201, 148, 26); }
+#markType3{ color: rgb(196, 169, 106); }
+#markType4{ color: rgb(232, 213, 163); }
+#markType5{ color: rgb(204, 51, 51); }
+#markType7{ color: rgb(122, 106, 74); }
+#markType8{ color: rgb(106, 158, 181); font-size: 18px; font-weight: 500; }
+#markType9{ color: rgb(74, 103, 65); }
+#markType10{ color: rgb(122, 74, 154); }

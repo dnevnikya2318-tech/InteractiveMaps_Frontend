@@ -10,26 +10,25 @@
     <div id="root">
         <div class="flex flex-col">
             <header>
-                <div id="header-left">
-                    <div class="menu-btn" id="main-emblem">✦</div>
+                <div id="headerLeft">
+                    <div class="menu-btn" id="mainEmblem">✦</div>
                     <div>
-                        <div id="site-title">Intermapcer</div>
-                        <div id="site-subtitle">Realm Atlas</div>
+                        <div id="siteTitle">Intermapcer</div>
+                        <div id="siteSubtitle">Realm Atlas</div>
                     </div>
                     
                 </div>
-                <div id="header-mid">
+                <div id="headerMid">
                     <form id="mapTitleForm">
                         <input id="mapTitleInput" type="text" placeholder="Map Title">
                         <button type="submit" id="mapTitleSubmit">Update</button>
                     </form>
                     
                 </div>
-                <div id="map-title">Map Title</div>
-                <div id="header-right">
-                    <div id="user-info">You are: </div>
+                <div id="headerRight">
+                    <div id="userInfo">You are: </div>
                     <div>✦</div>
-                    <div id="logout-btn" class="logout-btn"><a>Log Out</a></div>
+                    <div id="logoutBtn" class="logout-btn"><a>Log Out</a></div>
                 </div>
                 
                 
@@ -37,49 +36,49 @@
             </header>
             <div class="overlay" id="overlay"></div>
             <div class="sidebar" id="sidebar">
-                <div class="sidebar-content" id="sidebar-content"></div>
+                <div class="sidebar-content" id="sidebarContent"></div>
             </div>
             <div id="main">
-                <div id="main-title">
-                    <div id="stars-top">✦ ✦ ✦</div>
+                <div id="mainTitle">
+                    <div id="starsTop">✦ ✦ ✦</div>
                     <h1>Intermapcer</h1>
                     <p>Realm Atlas &amp; Point of Interest Marker</p>
-                    <div id="stars-bottom">✦ ✦ ✦</div>
+                    <div id="starsBottom">✦ ✦ ✦</div>
                 </div>
                 <!-- Зона загрузки -->
-                <div id="drop-area" class="drop-zone">
+                <div id="dropArea" class="drop-zone">
                     <div class="input-corner" style="inset: 12px auto auto 12px; border-style: solid none none solid;"></div>
                     <div class="input-corner" style="inset: 12px 12px auto auto; border-style: solid solid none none;"></div>
                     <div class="input-corner" style="inset: auto auto 12px 12px; border-style: none none solid solid;"></div>
                     <div class="input-corner" style="inset: auto 12px 12px auto; border-style: none solid solid none;"></div>
-                    <div id="world-icon">🗺</div>
+                    <div id="worldIcon">🗺</div>
                     <span class="drop-zone__prompt">DRAG YOUR MAP HERE</span>
-                    <span id="input-prompt">or click to browse your charts</span>
-                    <span id="input-image-types">PNG, JPG, WEBP — any image of your world</span>
-                    <input type="file" id="file-input" class="drop-zone__input" accept="image/*">
+                    <span id="inputPrompt">or click to browse your charts</span>
+                    <span id="inputImageTypes">PNG, JPG, WEBP — any image of your world</span>
+                    <input type="file" id="fileInput" class="drop-zone__input" accept="image/*">
                 </div>
 
                 <!-- Контейнер для просмотра (появляется вместо drop_zone) -->
-                <div id="view-area">
+                <div id="viewArea">
                     <div class="controls">
-                        <button id="reset-btn" type="button">╳</button>
+                        <button id="resetBtn" type="button">╳</button>
                     </div>
 
-                    <div id="image-wrapper">
-                        <img id="full-preview" src="" alt="Просмотр">
-                        <div id="markers-layer"></div>
-                        <div id="label-popup" class="popup">
+                    <div id="imageWrapper">
+                        <img id="fullPreview" src="" alt="Preview">
+                        <div id="markersLayer"></div>
+                        <div id="labelPopup" class="popup">
                             <div id="popupFirstRow">
-                                <button type="button" style="font-size: 16px; color: rgb(139, 26, 26); width: 25px; height: 25px;">☠</button>
-                                <button type="button" style="font-size: 16px; color: rgb(201, 148, 26); width: 25px; height: 25px;">⚗</button>
-                                <button type="button" style="font-size: 16px; color: rgb(196, 169, 106); width: 25px; height: 25px;">⌂</button>
-                                <button type="button" style="font-size: 16px; color: rgb(232, 213, 163); width: 25px; height: 25px;">★</button>
-                                <button type="button" style="font-size: 16px; color: rgb(204, 51, 51); width: 25px; height: 25px;">⚔</button>
-                                <button type="button" style="font-size: 16px; width: 25px; height: 25px;">📜</button>
-                                <button type="button" style="font-size: 16px; color: rgb(122, 106, 74); width: 25px; height: 25px;">◆</button>
-                                <button type="button" style="font-size: 18px; color: rgb(106, 158, 181); font-weight: 500; width: 25px; height: 25px;">⌖</button>
-                                <button type="button" style="font-size: 16px; color: rgb(74, 103, 65); width: 25px; height: 25px;">▲</button>
-                                <button type="button" style="font-size: 16px; color: rgb(122, 74, 154); width: 25px; height: 25px;">⊕</button>
+                                <button id="markType1" class="mark-type-btn" type="button">☠</button>
+                                <button id="markType2" class="mark-type-btn" type="button">⚗</button>
+                                <button id="markType3" class="mark-type-btn" type="button">⌂</button>
+                                <button id="markType4" class="mark-type-btn" type="button">★</button>
+                                <button id="markType5" class="mark-type-btn" type="button">⚔</button>
+                                <button id="markType6" class="mark-type-btn" type="button">📜</button>
+                                <button id="markType7" class="mark-type-btn" type="button">◆</button>
+                                <button id="markType8" class="mark-type-btn" type="button">⌖</button>
+                                <button id="markType9" class="mark-type-btn" type="button">▲</button>
+                                <button id="markType10" class="mark-type-btn" type="button">⊕</button>
                                 <div>
                                     <div id="sizePreviewContainer">
                                         <div id="sizePreview">☠</div>
@@ -100,17 +99,19 @@
                                 </div>
                             </div>
                             <div id="popupSecondRow" style="width: 100%; display: flex; margin-bottom: 2%;">
-                                <textarea id="title-input" maxlength="100" placeholder="Title..." required></textarea>
-                                <div class="countMax" style="width: 20%; justify-self: flex-start;"><p><span id="title-input-count">100</span>/100</p></div>
+                                <textarea id="titleInput" maxlength="100" placeholder="Title..." required></textarea>
+                                <div class="countMax" style="width: 20%; justify-self: flex-start;"><p><span id="titleInputCount">100</span>/100</p></div>
                             </div>
                             <div style="width: 100%; display: flex; align-items: center;">
-                                <textarea id="description-input" maxlength="500" rows="3" placeholder="Description..."></textarea>
-                                <div class="countMax"><span id="description-input-count">500</span>/500</div>
+                                <textarea id="descriptionInput" maxlength="500" rows="3" placeholder="Description..."></textarea>
+                                <div class="countMax"><span id="descriptionInputCount">500</span>/500</div>
                             </div>
-                            <button id="add-label-btn" type="button">Add point</button>                            
+                            <button id="addLabelBtn" type="button">Add point</button>
+                            <button id="putLabelBtn" type="button">Update point</button>                             
                         </div>
-                        <div id="delete-popup" class="d-popup">
-                            <button id="delete-label-btn" type="button">Delete point</button>
+                        <div id="deletePopup" class="d-popup">
+                            <button id="updateLabelBtn" type="button">Update point</button>
+                            <button id="deleteLabelBtn" type="button">Delete point</button>
                         </div>
                     </div>
         
@@ -160,7 +161,7 @@
                 </div>
             </div>
 
-            <script src="scripts/index.js"></script>
+            
         </div>
     </div>
     <div class="delete-popup-overlay" id="deletePopupOverlay">
@@ -177,5 +178,6 @@
             </form>
         </div>
     </div>
+    <script src="scripts/index.js"></script>
 </body>
 </html>

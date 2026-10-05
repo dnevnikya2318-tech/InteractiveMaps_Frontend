@@ -1,32 +1,36 @@
-const mainTitle = document.getElementById('main-title');
-const dropArea = document.getElementById('drop-area');
-const fileInput = document.getElementById('file-input');
-const viewArea = document.getElementById('view-area');
-const fullPreview = document.getElementById('full-preview');
-const resetBtn = document.getElementById('reset-btn');
-const imageWrapper = document.getElementById('image-wrapper');
-const markersLayer = document.getElementById('markers-layer');
-const popup = document.getElementById('label-popup');
-const addLabelBtn = document.getElementById('add-label-btn');
-const deletePopup = document.getElementById('delete-popup');
-const deleteLabelBtn = document.getElementById('delete-label-btn');
+const mainTitle = document.getElementById('mainTitle');
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+const viewArea = document.getElementById('viewArea');
+const fullPreview = document.getElementById('fullPreview');
+const resetBtn = document.getElementById('resetBtn');
+const imageWrapper = document.getElementById('imageWrapper');
+const markersLayer = document.getElementById('markersLayer');
+const popup = document.getElementById('labelPopup');
+const addLabelBtn = document.getElementById('addLabelBtn');
+const deletePopup = document.getElementById('deletePopup');
+const deleteLabelBtn = document.getElementById('deleteLabelBtn');
 
 // Label input counter logic
-const titleInput = document.getElementById('title-input');
-const titleInputCount = document.getElementById('title-input-count');
+const titleInput = document.getElementById('titleInput');
+const titleInputCount = document.getElementById('titleInputCount');
 const titleInputMaxChar = titleInput.maxLength;
 
-const descriptionInput = document.getElementById('description-input');
-const descriptionInputCount = document.getElementById('description-input-count');
+const descriptionInput = document.getElementById('descriptionInput');
+const descriptionInputCount = document.getElementById('descriptionInputCount');
 const descriptionInputMaxChar = descriptionInput.maxLength;
 const token = localStorage.getItem('authToken');
+const putLabelBtn = document.getElementById('putLabelBtn');
+const updateLabelBtn = document.getElementById('updateLabelBtn');
 
 let currMapId = null;
 let currMarkImage = null;
 
+let currPoint = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-    const userInfoElement = document.getElementById('user-info');
-    const logoutBtn = document.getElementById('logout-btn');
+    const userInfoElement = document.getElementById('userInfo');
+    const logoutBtn = document.getElementById('logoutBtn');
     
     // Authentification 
     if (!token)
@@ -91,19 +95,6 @@ class Point {
     }
 }
 
-// TO DELETE
-// Проверить, необходим ли вообще этот класс, потому что он, кажется нигде не используется
-class Map {
-    constructor(id, ownerId, title, isPublic, imagePath, imageName){
-        this.Id = id;
-        this.OwnerId = ownerId;
-        this.Title = title;
-        this.IsPublic = isPublic;
-        this.ImagePath = imagePath;
-        this.ImageName = imageName;
-    }
-}
-
 let popupPoint = null;
 let selectedMarkerId = null;
 
@@ -116,6 +107,7 @@ function hidePopups() {
     });
     popupPoint = null;
     selectedMarkerId = null;
+    currPoint = null;
 }
 
 function positionPopup(popupElement, x, y) {
@@ -133,28 +125,31 @@ function positionPopup(popupElement, x, y) {
     popupElement.style.top = `${top}px`;
 }
 
-// TO UPDATE
-// функции передаётся объект класса Point(x, y, title, description)
 // При вызове функция создаёт на карте маркеры и соответствующие им описания
-// TODO:
-// Изменить наполнение html элементов в соответствии с новыми полями класса Point
-// Добавить секцию с изображением, которое загружается напрямую из S3
 function createMarker(point) {
-    // создание уникального идентификатора
-    // Изменить, так как должно происходить на бэкенде при создании сущности.
-    // считывание с нового поля Id в Point???
-    const id = crypto.randomUUID();
+    const id = point.Id;
 
     const marker = document.createElement('div');
     marker.className = 'marker';
     marker.dataset.id = id;
     marker.style.left = `${point.X}px`;
     marker.style.top = `${point.Y}px`;
+    marker.textContent = point.MarkType;
+    marker.style.color = markerColorSelection(point.MarkType);
+    marker.style.width = `${9 + point.Size}px`;
+    marker.style.height = `${9 + point.Size}px`;
+    marker.style.fontSize = `${point.Size}px`;
+
+    if (point.MarkType == "⌖"){
+        marker.style.fontWeight = 500;
+    }
 
     const label = document.createElement('div');
     const pointTitle = document.createElement('h1');
     const pointDescription = document.createElement('p');
     const hr = document.createElement('hr');
+    
+    
     pointTitle.className = 'point-title';
     pointDescription.className = 'point-description';
     pointTitle.textContent = `${point.Title}`;
@@ -162,6 +157,12 @@ function createMarker(point) {
     label.appendChild(pointTitle);
     label.appendChild(hr);
     label.appendChild(pointDescription);
+    if (point.ImagePath != null)
+    {
+        const labelImg = document.createElement('img');
+        labelImg.src = point.ImagePath;
+        label.appendChild(labelImg);
+    }
 
     
     label.className = 'marker-label';
@@ -238,22 +239,37 @@ dropArea.addEventListener('drop', async (e) => {
     }
 });
 
-// TO UPDATE
-// Добавить вызов функции createMarker для всех полученных маркеров из json
-function showMap(filePath) {
+async function showMap(filePath) {
     fullPreview.src = filePath;
 
     mainTitle.style.display = 'none';
     dropArea.style.display = 'none';
     viewArea.style.display = 'block';
+    markersLayer.innerHTML = '';
 
-    const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
-
-    response.forEach(element => {
-
+    try {
+        const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        data.forEach(element => {
+            const point = new Point(
+                element.id,
+                element.mapId,
+                element.title,
+                element.description,
+                element.x,
+                element.y,
+                element.size,
+                element.markType,
+                element.imagePath,
+                element.imageName
+            );
+            createMarker(point);
+    })} catch(error) {
+        console.log(error);
+    }
 }
 
 async function showTitle() {
@@ -264,7 +280,6 @@ async function showTitle() {
     const mapTitleInput = document.getElementById('mapTitleInput');
     const mapTitleForm = document.getElementById('mapTitleForm');
     map = await response.json();
-    console.log(map.title);
 
     mapTitleInput.style.visibility = 'visible';
     mapTitleInput.value = map.title;
@@ -324,6 +339,9 @@ fullPreview.addEventListener('contextmenu', (e) => {
 
     popup.classList.add('show');
 
+    addLabelBtn.style.display = 'block';
+    putLabelBtn.style.display = 'none';
+
     positionPopup(popup, x, y);
 });
 
@@ -335,13 +353,14 @@ fullPreview.addEventListener('click', (e) => {
 addLabelBtn.addEventListener('click', async () => {
     if (!popupPoint) return;
 
-    const markImageName = null;
-    const markImagePath = null;
+    let markImageName = null;
+    let markImagePath = null;
     if (currMarkImage != null)
     {
         const imageUploadResponse = await s3Response(currMarkImage);
         markImageName = imageUploadResponse.imageName;
         markImagePath = imageUploadResponse.imageUrl;
+        removeMarkImage();
     }
 
     try {
@@ -395,11 +414,19 @@ addLabelBtn.addEventListener('click', async () => {
     
 });
 
-// TO UPDATE
-// Добавить DELETE запрос в базу данных
-deleteLabelBtn.addEventListener('click', () => {
+deleteLabelBtn.addEventListener('click', async () => {
     if (!selectedMarkerId) return;
-
+    try {
+        const response = await fetch(`http://localhost:5064/landmarks/${selectedMarkerId}`, {
+            method: 'DELETE',
+            headers: { 
+                'Authorization': `Bearer ${token}`
+            }})
+    } catch (error) {
+        console.error(error);
+        return;
+    }
+    
     document.querySelectorAll(`[data-id="${selectedMarkerId}"]`).forEach(el => el.remove());
 
     hidePopups();
@@ -456,7 +483,7 @@ const s3Response = async (fileObject) => {
 }
 
 //sidebar logic
-const menuBtn = document.getElementById('main-emblem');
+const menuBtn = document.getElementById('mainEmblem');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.getElementById('overlay');
 
@@ -478,7 +505,7 @@ menuBtn.addEventListener('click', (e) => {
 });
 
 async function loadMapsList(userId) {
-    const sidebarContent = document.getElementById('sidebar-content');
+    const sidebarContent = document.getElementById('sidebarContent');
 
     try {
         const response = await fetch(`http://localhost:5064/maps/user/${userId}`, {
@@ -499,10 +526,10 @@ async function loadMapsList(userId) {
             const div = document.createElement('div');
             div.textContent = element.title;
             div.Id = element.id;
-            div.addEventListener('click', () => {
-                showMap(element.imagePath);
+            div.addEventListener('click', async () => {
                 currMapId = div.Id;
-                showTitle();
+                await showMap(element.imagePath);
+                await showTitle();
             });
             sidebarContent.append(div);
             // Add Delete Button item
@@ -537,8 +564,8 @@ async function uploadMap(file) {
         } catch (error) {
             console.error(error);
         }
-        showMap(s3Data.imageUrl);
-        showTitle();
+        await showMap(s3Data.imageUrl);
+        await showTitle();
     }
 }
 
@@ -664,6 +691,8 @@ markImageInput.addEventListener('change', (e) => {
         }
 
         reader.readAsDataURL(file);
+
+        currMarkImage = file;
     }
 });
 
@@ -677,13 +706,262 @@ removeMarkImageBtn.addEventListener('click', (e) => {
     uploadPlusIcon.style.display = 'block';
     removeMarkImageBtn.style.display = 'none';
     uploadMarkImageBox.style.borderStyle = 'dashed';
+    currMarkImage = null;
 });
 
-function removeMarkImage () {
+function removeMarkImage() {
     markImageInput.value = '';
     previewMarkImage.src = '';
     previewMarkImage.style.display = 'none';
     uploadPlusIcon.style.display = 'block';
     removeMarkImageBtn.style.display = 'none';
     uploadMarkImageBox.style.borderStyle = 'dashed';
+    currMarkImage = null;
+}
+
+const markerColorSelection = (markType) => {
+    let rgb = null;
+    switch (markType) {
+        case "☠":
+            rgb = "rgb(139, 26, 26)";
+            break;
+        case "⚗":
+            rgb = "rgb(201, 148, 26)";
+            break;
+        case "⌂":
+            rgb = "rgb(196, 169, 106)";
+            break;
+        case "★":
+            rgb = "rgb(232, 213, 163)";
+            break;
+        case "⚔":
+            rgb = "rgb(204, 51, 51)";
+            break;
+        case "📜":
+            rgb = "rgb(255, 255, 255)";
+            break;
+        case "◆":
+            rgb = "rgb(122, 106, 74)";
+            break;
+        case "⌖":
+            rgb = "rgb(106, 158, 181)";
+            break;
+        case "▲":
+            rgb = "rgb(74, 103, 65)";
+            break;
+        case "⊕":
+            rgb = "rgb(122, 74, 154)";
+            break;
+        default:
+            rgb = "rgb(255, 255, 255)"
+            break;
+    }
+    return rgb;
+}
+
+const markType1 = document.getElementById('markType1');
+const markType2 = document.getElementById('markType2');
+const markType3 = document.getElementById('markType3');
+const markType4 = document.getElementById('markType4');
+const markType5 = document.getElementById('markType5');
+const markType6 = document.getElementById('markType6');
+const markType7 = document.getElementById('markType7');
+const markType8 = document.getElementById('markType8');
+const markType9 = document.getElementById('markType9');
+const markType10 = document.getElementById('markType10');
+markType1.addEventListener('click', () => {
+    sizePreview.textContent = markType1.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType2.addEventListener('click', () => {
+    sizePreview.textContent = markType2.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType3.addEventListener('click', () => {
+    sizePreview.textContent = markType3.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType4.addEventListener('click', () => {
+    sizePreview.textContent = markType4.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType5.addEventListener('click', () => {
+    sizePreview.textContent = markType5.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType6.addEventListener('click', () => {
+    sizePreview.textContent = markType6.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType7.addEventListener('click', () => {
+    sizePreview.textContent = markType7.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType8.addEventListener('click', () => {
+    sizePreview.textContent = markType8.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType9.addEventListener('click', () => {
+    sizePreview.textContent = markType9.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+markType10.addEventListener('click', () => {
+    sizePreview.textContent = markType10.textContent;
+    sizePreview.style.color = markerColorSelection(sizePreview.textContent);
+})
+
+updateLabelBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const markId = selectedMarkerId;
+    hidePopups();
+
+    const rect = imageWrapper.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    popupPoint = { x, y };
+
+    popup.classList.add('show');
+
+    addLabelBtn.style.display = 'none';
+    putLabelBtn.style.display = 'block';
+
+    positionPopup(popup, x, y);
+
+    try {
+        const response = await fetch(`http://localhost:5064/landmarks/${markId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        
+        currPoint = new Point(
+            data.id,
+            data.mapId,
+            data.title,
+            data.description,
+            data.x,
+            data.y,
+            data.size,
+            data.markType,
+            data.imagePath,
+            data.imageName
+        );
+
+        titleInput.value = currPoint.Title;
+        descriptionInput.value = currPoint.Description;
+        sizePreview.textContent = currPoint.MarkType;
+        sizeResult.textContent = currPoint.Size;
+        sizePreview.style.width = currPoint.Size + 9 + 'px';
+        sizePreview.style.height = currPoint.Size + 9 + 'px';
+        sizePreview.style.fontSize = currPoint.Size + 'px';
+        sizePreview.style.color = markerColorSelection(currPoint.MarkType);
+        if (currPoint.ImagePath != null) {
+            previewMarkImage.src = currPoint.ImagePath;
+            previewMarkImage.style.display = 'block';
+            uploadPlusIcon.style.display = 'none';
+            removeMarkImageBtn.style.display = 'flex';
+            uploadMarkImageBox.style.borderStyle = 'solid';
+        }
+    } catch(error) {
+        console.log(error);
+    }
+})
+
+putLabelBtn.addEventListener('click', async () => {
+
+    let markImageName = null;
+    let markImagePath = null;
+    if (uploadPlusIcon.style.display == 'none'){
+        markImageName = currPoint.ImageName;
+        markImagePath = currPoint.ImagePath;
+    }
+
+    if ((markImagePath != null && previewMarkImage.src != currPoint.ImagePath)
+        || (currPoint.ImagePath == null && uploadPlusIcon.style.display == 'none')){
+        const imageUploadResponse = await uploadImageFromUrl(previewMarkImage.src);
+        markImageName = imageUploadResponse.imageName;
+        markImagePath = imageUploadResponse.imageUrl;
+        removeMarkImage();
+    }
+
+    try {
+        const response = await fetch(`http://localhost:5064/landmarks/${currPoint.Id}`, {
+            method: 'PUT',
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ 
+                mapId: currPoint.MapId, 
+                title: titleInput.value, 
+                description: descriptionInput.value, 
+                x: currPoint.X,
+                y: currPoint.Y,
+                size: parseInt(sizeResult.textContent, 10),
+                markType: sizePreview.textContent,
+                imagePath: markImagePath, 
+                imageName: markImageName })
+        });
+        if (!response.ok) {
+            throw new Error('Unexpected error.');
+        }
+        markId = await response.json();
+
+        document.querySelectorAll(`[data-id="${markId}"]`).forEach(el => el.remove());
+
+        const point = new Point(
+            markId,
+            currMapId, 
+            titleInput.value, 
+            descriptionInput.value, 
+            currPoint.X, 
+            currPoint.Y, 
+            parseInt(sizeResult.textContent, 10), 
+            sizePreview.textContent,
+            markImagePath,
+            markImageName
+        );
+
+        createMarker(point);
+
+        titleInput.value = '';
+        descriptionInput.value = '';
+        removeMarkImage();
+
+        hidePopups();
+    } catch (error) {
+        console.error(error);
+    }
+})
+
+const uploadImageFromUrl = async (imageUrl) => {
+    try {
+        const response = await fetch(imageUrl);
+
+        if(!response.ok) {
+            throw new Error(`Unable to download image: ${response.statusText}`);
+        }
+
+        const blob = await response.blob();
+
+        const mimeExtensions = {
+            'image/jpeg': 'jpg',
+            'image/jpg': 'jpg',
+            'image/png': 'png',
+            'image/gif': 'gif',
+            'image/webp': 'webp',
+            'image/svg+xml': 'svg'
+        };
+
+        const ext = mimeExtensions[blob.type] || 'jpg';
+
+        const filename = `image-${Date.now()}.${ext}`;
+
+        const fileObject = new File([blob], filename, { type: blob.type });
+
+        return await s3Response(fileObject);
+    } catch (error) {
+        console.error('Error occured during image processing:', error);
+    }
 }
