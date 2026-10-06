@@ -1,24 +1,9 @@
-const mainTitle = document.getElementById('mainTitle');
-const dropArea = document.getElementById('dropArea');
-const fileInput = document.getElementById('fileInput');
-const viewArea = document.getElementById('viewArea');
 const fullPreview = document.getElementById('fullPreview');
-const resetBtn = document.getElementById('resetBtn');
 const imageWrapper = document.getElementById('imageWrapper');
 const markersLayer = document.getElementById('markersLayer');
-const popup = document.getElementById('labelPopup');
-
-const token = localStorage.getItem('authToken');
-const putLabelBtn = document.getElementById('putLabelBtn');
-const updateLabelBtn = document.getElementById('updateLabelBtn');
+const mapTitleInput = document.getElementById('mapTitleInput');
 
 let currMapId = null;
-let currMarkImage = null;
-
-let currPoint = null;
-
-let popupPoint = null;
-let selectedMarkerId = null;
 
 class Point {
     constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
@@ -68,24 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function renderPublicData(data) {
-    
+    currMapId = data.id;
+    mapTitleInput.value = data.title;
+    showMap(data.imagePath);
 }
-
-
-
-
 
 //TOUPDATE
 function hidePopups() {
     const labelPopups = document.querySelectorAll('.marker-label');
-    popup.classList.remove('show');
-    deletePopup.classList.remove('show');
     labelPopups.forEach(el => {
         el.style.display = 'none';
     });
-    popupPoint = null;
-    selectedMarkerId = null;
-    currPoint = null;
 }
 
 function positionPopup(popupElement, x, y) {
@@ -103,7 +81,36 @@ function positionPopup(popupElement, x, y) {
     popupElement.style.top = `${top}px`;
 }
 
-//TOUPDATE
+async function showMap(filePath) {
+    fullPreview.src = filePath;
+
+    markersLayer.innerHTML = '';
+
+    try {
+        const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        data.forEach(element => {
+            const point = new Point(
+                element.id,
+                element.mapId,
+                element.title,
+                element.description,
+                element.x,
+                element.y,
+                element.size,
+                element.markType,
+                element.imagePath,
+                element.imageName
+            );
+            createMarker(point);
+    })} catch(error) {
+        console.log(error);
+    }
+}
+
 // При вызове функция создаёт на карте маркеры и соответствующие им описания
 function createMarker(point) {
     const id = point.Id;
@@ -168,77 +175,6 @@ function createMarker(point) {
     markersLayer.appendChild(label);
 }
 
-//TOUPDATE
-async function showMap(filePath) {
-    fullPreview.src = filePath;
-
-    mainTitle.style.display = 'none';
-    dropArea.style.display = 'none';
-    viewArea.style.display = 'block';
-    markersLayer.innerHTML = '';
-
-    try {
-        const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-        const data = await response.json();
-        data.forEach(element => {
-            const point = new Point(
-                element.id,
-                element.mapId,
-                element.title,
-                element.description,
-                element.x,
-                element.y,
-                element.size,
-                element.markType,
-                element.imagePath,
-                element.imageName
-            );
-            createMarker(point);
-    })} catch(error) {
-        console.log(error);
-    }
-}
-
-//TOUPDATE
-async function showTitle() {
-    const response = await fetch(`http://localhost:5064/maps/${currMapId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
-    const mapTitleInput = document.getElementById('mapTitleInput');
-    const mapTitleForm = document.getElementById('mapTitleForm');
-    map = await response.json();
-
-    mapTitleInput.style.visibility = 'visible';
-    mapTitleInput.value = map.title;
-    mapTitleForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        mapTitleInput.blur();
-        
-        try {
-            const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            oldMap = await oldResponse.json();
-            const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
-                method: 'PUT',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                 },
-                body: JSON.stringify({ ownerId: oldMap.ownerId, title: mapTitleInput.value, isPublic: oldMap.isPublic, imagePath: oldMap.imagePath, imageName: oldMap.imageName })
-            })
-        } catch (error) {
-            console.error("Error occured while updating maps title: ", error);
-            return;
-        }})
-    
-}
-
 // При нажатии левой кнопкой мыши на свободное место карты убирается всплывающее окно
 fullPreview.addEventListener('click', (e) => {
     hidePopups();
@@ -283,8 +219,3 @@ const markerColorSelection = (markType) => {
     }
     return rgb;
 }
-
-
-
-
-

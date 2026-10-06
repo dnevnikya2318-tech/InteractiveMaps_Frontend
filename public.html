@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InterMapcer</title>
-    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/public.css">
 </head>
 <body>
     <div id="root">
@@ -16,106 +16,25 @@
                         <div id="siteTitle">Intermapcer</div>
                         <div id="siteSubtitle">Realm Atlas</div>
                     </div>
-                    
                 </div>
                 <div id="headerMid">
                     <form id="mapTitleForm">
-                        <input id="mapTitleInput" type="text" placeholder="Map Title">
-                        <button type="submit" id="mapTitleSubmit">Update</button>
-                    </form>
-                    
+                        <input readonly id="mapTitleInput" type="text" placeholder="Map Title">
+                    </form> 
                 </div>
                 <div id="headerRight">
-                    <div id="userInfo">You are: </div>
+                    <div id="userInfo">You are: Reader</div>
                     <div>✦</div>
-                    <div id="logoutBtn" class="logout-btn"><a>Log Out</a></div>
-                </div>
-                
-                
-                
+                    <div id="logoutBtn" class="logout-btn"><a>Register</a></div>
+                </div>  
             </header>
-            <div class="overlay" id="overlay"></div>
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-content" id="sidebarContent"></div>
-            </div>
             <div id="main">
-                <div id="mainTitle">
-                    <div id="starsTop">✦ ✦ ✦</div>
-                    <h1>Intermapcer</h1>
-                    <p>Realm Atlas &amp; Point of Interest Marker</p>
-                    <div id="starsBottom">✦ ✦ ✦</div>
-                </div>
-                <!-- Зона загрузки -->
-                <div id="dropArea" class="drop-zone">
-                    <div class="input-corner" style="inset: 12px auto auto 12px; border-style: solid none none solid;"></div>
-                    <div class="input-corner" style="inset: 12px 12px auto auto; border-style: solid solid none none;"></div>
-                    <div class="input-corner" style="inset: auto auto 12px 12px; border-style: none none solid solid;"></div>
-                    <div class="input-corner" style="inset: auto 12px 12px auto; border-style: none solid solid none;"></div>
-                    <div id="worldIcon">🗺</div>
-                    <span class="drop-zone__prompt">DRAG YOUR MAP HERE</span>
-                    <span id="inputPrompt">or click to browse your charts</span>
-                    <span id="inputImageTypes">PNG, JPG, WEBP — any image of your world</span>
-                    <input type="file" id="fileInput" class="drop-zone__input" accept="image/*">
-                </div>
-
-                <!-- Контейнер для просмотра (появляется вместо drop_zone) -->
+                <!-- Контейнер для просмотра -->
                 <div id="viewArea">
-                    <div class="controls">
-                        <button id="resetBtn" type="button">╳</button>
-                    </div>
-
                     <div id="imageWrapper">
                         <img id="fullPreview" src="" alt="Preview">
                         <div id="markersLayer"></div>
-                        <div id="labelPopup" class="popup">
-                            <div id="popupFirstRow">
-                                <button id="markType1" class="mark-type-btn" type="button">☠</button>
-                                <button id="markType2" class="mark-type-btn" type="button">⚗</button>
-                                <button id="markType3" class="mark-type-btn" type="button">⌂</button>
-                                <button id="markType4" class="mark-type-btn" type="button">★</button>
-                                <button id="markType5" class="mark-type-btn" type="button">⚔</button>
-                                <button id="markType6" class="mark-type-btn" type="button">📜</button>
-                                <button id="markType7" class="mark-type-btn" type="button">◆</button>
-                                <button id="markType8" class="mark-type-btn" type="button">⌖</button>
-                                <button id="markType9" class="mark-type-btn" type="button">▲</button>
-                                <button id="markType10" class="mark-type-btn" type="button">⊕</button>
-                                <div>
-                                    <div id="sizePreviewContainer">
-                                        <div id="sizePreview">☠</div>
-                                    </div>
-                                    <div id="sizeChanger">
-                                        <button class="size-btn" id="sizeDecrement">–</button>
-                                        <textarea readonly id="sizeResult">16</textarea>
-                                        <button class="size-btn" id="sizeIncrement">+</button>
-                                    </div>
-                                </div>
-                                <div class="upload-mark-image-container">
-                                    <div class="remove-mark-image-btn" id="removeMarkImageBtn" title="Remove image"></div>
-                                    <div class="upload-mark-image-box" id="uploadMarkImageBox">
-                                        <span class="upload-plus-icon" id="uploadPlusIcon">+</span>
-                                        <img src="" alt="Preview" class="preview-mark-image" id="previewMarkImage">
-                                    </div>
-                                    <input type="file" id="markImageInput" class="mark-image-input" accept="image/*">
-                                </div>
-                            </div>
-                            <div id="popupSecondRow" style="width: 100%; display: flex; margin-bottom: 2%;">
-                                <textarea id="titleInput" maxlength="100" placeholder="Title..." required></textarea>
-                                <div class="countMax" style="width: 20%; justify-self: flex-start;"><p><span id="titleInputCount">100</span>/100</p></div>
-                            </div>
-                            <div style="width: 100%; display: flex; align-items: center;">
-                                <textarea id="descriptionInput" maxlength="500" rows="3" placeholder="Description..."></textarea>
-                                <div class="countMax"><span id="descriptionInputCount">500</span>/500</div>
-                            </div>
-                            <button id="addLabelBtn" type="button">Add point</button>
-                            <button id="putLabelBtn" type="button">Update point</button>                             
-                        </div>
-                        <div id="deletePopup" class="d-popup">
-                            <button id="updateLabelBtn" type="button">Update point</button>
-                            <button id="deleteLabelBtn" type="button">Delete point</button>
-                        </div>
                     </div>
-        
-        
                 </div>
                 <div id="legend">
                     <div class="legend">
@@ -160,24 +79,8 @@
                     </div>
                 </div>
             </div>
-
-            
         </div>
     </div>
-    <div class="delete-popup-overlay" id="deletePopupOverlay">
-        <div class="delete-popup-content">
-            <h3>Are you sure?</h3>
-            <p>This action is irreversable. To confirm map removal, write word <strong>delete</strong> in form below:</p>
-
-            <form class="delete-popup-form" id="deletePopupForm">
-                <input type="text" id="confirmInput" placeholder="Input delete" autocomplete="off">
-                <div class="delete-popup-actions">
-                    <button type="button" class="btn delete-map-btn-cancel" id="deleteMapCancelBtn">Cancel</button>
-                    <button type="submit" class="btn delete-map-btn-confirm" id="deleteMapConfirmBtn" disabled>Confirm</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    <script src="scripts/index.js"></script>
+    <script src="scripts/public.js"></script>
 </body>
 </html>

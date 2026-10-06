@@ -840,3 +840,92 @@ header{
 #markType8{ color: rgb(106, 158, 181); font-size: 18px; font-weight: 500; }
 #markType9{ color: rgb(74, 103, 65); }
 #markType10{ color: rgb(122, 74, 154); }
+
+/* Контейнер переключателя */
+.toggle-public-container {
+    position: relative;
+    display: none;
+    align-items: center;
+    width: 180px;
+    height: 40px;
+    background-color: rgb(232, 213, 163);
+    border-radius: 20px;
+    cursor: pointer;
+    padding: 4px;
+    user-select: none;
+    box-sizing: border-box;
+}
+
+/* Текст внутри переключателя */
+.toggle-public-label {
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 2;
+    color: rgb(232, 213, 163);
+    transition: color 0.3s ease;
+}
+
+/* Активное состояние текста */
+.toggle-public-container.is-public .label-private { color: rgb(42, 32, 16); }
+.toggle-public-container.is-public .label-public { color: rgb(232, 213, 163); }
+
+.toggle-public-container:not(.is-public) .label-private { color: rgb(232, 213, 163); }
+.toggle-public-container:not(.is-public) .label-public { color: rgb(42, 32, 16); }
+
+/* Ползунок (тумблер) */
+.toggle-public-slider {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 84px;
+    height: 32px;
+    background-color: rgb(42, 32, 16); /* Базовый синий цвет */
+    border-radius: 16px;
+    z-index: 1;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Смещение ползунка при активации Public */
+.toggle-public-container.is-public .toggle-public-slider {
+    transform: translateX(88px);
+}
+
+/* Скрытая кнопка копирования */
+.copy-public-btn {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    padding: 10px 20px;
+    margin-left: 5px;
+    font-size: 18px;
+    font-weight: 500;
+    color: rgb(42, 32, 16);
+    background-color: rgb(232, 213, 163);
+    border: 1px solid rgb(42, 32, 16);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Кнопка плавно появляется, когда активен Public */
+.copy-public-btn.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.copy-public-btn:hover {
+    background-color: rgb(248, 230, 185);
+}
+
+.copy-public-btn:active {
+    transform: scale(0.98);
+}
+
+#headerMid{
+    display: flex;
+}

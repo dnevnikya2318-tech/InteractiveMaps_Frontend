@@ -28,6 +28,24 @@ let currMarkImage = null;
 
 let currPoint = null;
 
+let popupPoint = null;
+let selectedMarkerId = null;
+
+class Point {
+    constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
+        this.Id = id;
+        this.MapId = mapId;
+        this.Title = title;
+        this.Description = description;
+        this.X = x;
+        this.Y = y;
+        this.Size = size;
+        this.MarkType = markType;
+        this.ImagePath = imagePath;
+        this.ImageName = imageName;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const userInfoElement = document.getElementById('userInfo');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -79,24 +97,6 @@ descriptionInput.addEventListener('input', () => {
     const remaining = descriptionInputMaxChar - descriptionInput.value.length;
     descriptionInputCount.textContent = remaining;
 });
-
-class Point {
-    constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
-        this.Id = id;
-        this.MapId = mapId;
-        this.Title = title;
-        this.Description = description;
-        this.X = x;
-        this.Y = y;
-        this.Size = size;
-        this.MarkType = markType;
-        this.ImagePath = imagePath;
-        this.ImageName = imageName;
-    }
-}
-
-let popupPoint = null;
-let selectedMarkerId = null;
 
 function hidePopups() {
     const labelPopups = document.querySelectorAll('.marker-label');
@@ -272,6 +272,8 @@ async function showMap(filePath) {
     }
 }
 
+//TOUPDATE
+// Отображает название карты и уровень доступа, а также реагирует на их изменения.
 async function showTitle() {
     const response = await fetch(`http://localhost:5064/maps/${currMapId}`, {
         method: 'GET',
@@ -304,7 +306,83 @@ async function showTitle() {
         } catch (error) {
             console.error("Error occured while updating maps title: ", error);
             return;
-        }})
+        }});
+
+    const toggleAccess = document.getElementById('toggleAccess');
+    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    
+    toggleAccess.style.display = 'flex';
+    if(map.isPublic) {
+        toggleAccess.classList.add('is-public');
+        copyLinkBtn.classList.add('show');
+    } else {
+        toggleAccess.classList.remove('is-public');
+        copyLinkBtn.classList.remove('show');
+    }
+
+    // Логика переключения
+    toggleAccess.addEventListener('click', async () => {
+        // Переключаем класс активности у контейнера
+        const isPublic = toggleAccess.classList.toggle('is-public');
+        
+        // Показываем или скрываем кнопку копирования
+        if (isPublic) {
+            copyLinkBtn.classList.add('show');
+            try {
+                const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                oldMap = await oldResponse.json();
+                const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ ownerId: oldMap.ownerId, title: oldMap.title, isPublic: true, imagePath: oldMap.imagePath, imageName: oldMap.imageName })
+                })
+            } catch (error) {
+                console.error("Error occured while updating maps access level: ", error);
+                return;
+            }
+        } else {
+            copyLinkBtn.classList.remove('show');
+            try {
+                const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                oldMap = await oldResponse.json();
+                const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ ownerId: oldMap.ownerId, title: oldMap.title, isPublic: false, imagePath: oldMap.imagePath, imageName: oldMap.imageName })
+                })
+            } catch (error) {
+                console.error("Error occured while updating maps access level: ", error);
+                return;
+            }
+        }
+    });
+
+    // Логика копирования в буфер обмена
+    copyLinkBtn.addEventListener('click', () => {
+        const textToCopy = `http://127.0.0.1:5533/public.html?map=${currMapId}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            // Визуальный отклик для пользователя при успешном копировании
+            const originalText = copyLinkBtn.textContent;
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyLinkBtn.textContent = originalText;
+            }, 1500);
+        }).catch(err => {
+            console.error('Error: ', err);
+        });
+    });
     
 }
 function hideTitle() {
