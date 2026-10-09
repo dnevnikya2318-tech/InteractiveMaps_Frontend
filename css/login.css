@@ -217,3 +217,7 @@ body{
 #register{
     background: linear-gradient(rgb(26, 21, 9), rgb(14, 11, 6));
 }
+
+#verificationForm{
+    display: none;
+}

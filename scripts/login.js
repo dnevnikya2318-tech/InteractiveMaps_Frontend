@@ -1,6 +1,11 @@
 const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
+const verificationForm = document.getElementById('verificationForm');
+const verificationInput = document.getElementById('verificationInput');
+const registerForm = document.getElementById('registerForm');
+
+let currEmail = null;
 
 registerBtn.addEventListener('click', () => {
     container.classList.add("active");
@@ -42,7 +47,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     }
 });
 
-document.getElementById('registerForm').addEventListener('submit', async (e) => {
+registerForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const usernameInput = document.getElementById('usernameRegister').value.trim();
@@ -82,14 +87,42 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
         messageElement.style.color = 'green';
         messageElement.innerText = data.message || 'Successful registration!';
 
+        // Сохраняем e-mail для метода верификации
+        currEmail = emailInput;
+
         // Очищаем форму
         document.getElementById('registerForm').reset();
 
-        // Обновляем страницу
-        location.reload(true);
+        registerForm.style.display = 'none'
+        verificationForm.style.display = 'flex';
+        
 
     } catch (error) {
         // Выводим ошибку, которую прислал сервер
         messageElement.innerText = error.message;
+    }
+});
+
+verificationForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+        const response = await fetch('http://localhost:5064/api/auth/verify-code', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: currEmail, code: verificationInput.value })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message);
+            localStorage.setItem('authToken', data.token);
+            window.location.href = '/index.html';
+        } else {
+            alert(data.message);
+            verificationForm.reset();
+        }
+    } catch (error) {
+        console.error('Verification error:', error);
     }
 });
