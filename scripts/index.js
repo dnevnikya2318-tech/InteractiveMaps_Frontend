@@ -31,6 +31,11 @@ let currPoint = null;
 let popupPoint = null;
 let selectedMarkerId = null;
 
+let configResponse = null;
+let config = null;
+let apiBaseUrl = null;
+let s3BaseUrl = null;
+
 class Point {
     constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
         this.Id = id;
@@ -46,7 +51,12 @@ class Point {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    configResponse = await fetch('./config.json');
+    config = await configResponse.json();
+    apiBaseUrl = config.API_BASE_URL;
+    s3BaseUrl = config.S3_BASE_URL;
+
     const userInfoElement = document.getElementById('userInfo');
     const logoutBtn = document.getElementById('logoutBtn');
     
@@ -157,10 +167,10 @@ function createMarker(point) {
     label.appendChild(pointTitle);
     label.appendChild(hr);
     label.appendChild(pointDescription);
-    if (point.ImagePath != null)
+    if (point.ImageName != null)
     {
         const labelImg = document.createElement('img');
-        labelImg.src = point.ImagePath;
+        labelImg.src = s3BaseUrl + point.ImageName;
         label.appendChild(labelImg);
     }
 
@@ -248,7 +258,7 @@ async function showMap(filePath) {
     markersLayer.innerHTML = '';
 
     try {
-        const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
+        const response = await fetch(`${apiBaseUrl}/landmarks/map/${currMapId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -275,7 +285,7 @@ async function showMap(filePath) {
 //TOUPDATE
 // Отображает название карты и уровень доступа, а также реагирует на их изменения.
 async function showTitle() {
-    const response = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+    const response = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     });
@@ -290,12 +300,12 @@ async function showTitle() {
         mapTitleInput.blur();
         
         try {
-            const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+            const oldResponse = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
             oldMap = await oldResponse.json();
-            const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+            const newResponse = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -329,12 +339,12 @@ async function showTitle() {
         if (isPublic) {
             copyLinkBtn.classList.add('show');
             try {
-                const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                const oldResponse = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
                 oldMap = await oldResponse.json();
-                const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                const newResponse = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
                     method: 'PUT',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -349,12 +359,12 @@ async function showTitle() {
         } else {
             copyLinkBtn.classList.remove('show');
             try {
-                const oldResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                const oldResponse = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' }
                 });
                 oldMap = await oldResponse.json();
-                const newResponse = await fetch(`http://localhost:5064/maps/${currMapId}`, {
+                const newResponse = await fetch(`${apiBaseUrl}/maps/${currMapId}`, {
                     method: 'PUT',
                     headers: { 
                         'Content-Type': 'application/json',
@@ -442,7 +452,7 @@ addLabelBtn.addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch('http://localhost:5064/landmarks', {
+        const response = await fetch(`${apiBaseUrl}/landmarks`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
@@ -495,7 +505,7 @@ addLabelBtn.addEventListener('click', async () => {
 deleteLabelBtn.addEventListener('click', async () => {
     if (!selectedMarkerId) return;
     try {
-        const response = await fetch(`http://localhost:5064/landmarks/${selectedMarkerId}`, {
+        const response = await fetch(`${apiBaseUrl}/landmarks/${selectedMarkerId}`, {
             method: 'DELETE',
             headers: { 
                 'Authorization': `Bearer ${token}`
@@ -539,7 +549,7 @@ const s3Response = async (fileObject) => {
     formData.append('file', fileObject);
 
     try {
-        const response = await fetch('http://localhost:5064/api/images/upload', {
+        const response = await fetch(`${apiBaseUrl}/api/images/upload`, {
             method: 'POST',
             headers: {
                     'Authorization': `Bearer ${token}`
@@ -586,7 +596,7 @@ async function loadMapsList(userId) {
     const sidebarContent = document.getElementById('sidebarContent');
 
     try {
-        const response = await fetch(`http://localhost:5064/maps/user/${userId}`, {
+        const response = await fetch(`${apiBaseUrl}/maps/user/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
         });
@@ -606,7 +616,7 @@ async function loadMapsList(userId) {
             div.Id = element.id;
             div.addEventListener('click', async () => {
                 currMapId = div.Id;
-                await showMap(element.imagePath);
+                await showMap(s3BaseUrl + element.imageName);
                 await showTitle();
             });
             sidebarContent.append(div);
@@ -630,7 +640,7 @@ async function uploadMap(file) {
         const s3Data = await s3Response(file);
         
         try {
-            const response = await fetch('http://localhost:5064/maps', {
+            const response = await fetch(`${apiBaseUrl}/maps`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ownerId: ownerId, title: "My Map", isPublic: false, imagePath: s3Data.imageUrl, imageName: s3Data.imageName })
@@ -642,7 +652,7 @@ async function uploadMap(file) {
         } catch (error) {
             console.error(error);
         }
-        await showMap(s3Data.imageUrl);
+        await showMap(s3BaseUrl + s3Data.ImageName);
         await showTitle();
     }
 }
@@ -690,7 +700,7 @@ async function deleteMap(id, imageName) {
 
         if (confirmInput.value.trim() === 'delete') {
             confirmBtn.disabled = true;
-            await fetch(`http://localhost:5064/maps/${id}`, {
+            await fetch(`${apiBaseUrl}/maps/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -907,7 +917,7 @@ updateLabelBtn.addEventListener('click', async (e) => {
     positionPopup(popup, x, y);
 
     try {
-        const response = await fetch(`http://localhost:5064/landmarks/${markId}`, {
+        const response = await fetch(`${apiBaseUrl}/landmarks/${markId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -935,7 +945,7 @@ updateLabelBtn.addEventListener('click', async (e) => {
         sizePreview.style.fontSize = currPoint.Size + 'px';
         sizePreview.style.color = markerColorSelection(currPoint.MarkType);
         if (currPoint.ImagePath != null) {
-            previewMarkImage.src = currPoint.ImagePath;
+            previewMarkImage.src = s3BaseUrl + currPoint.ImageName;
             previewMarkImage.style.display = 'block';
             uploadPlusIcon.style.display = 'none';
             removeMarkImageBtn.style.display = 'flex';
@@ -964,7 +974,7 @@ putLabelBtn.addEventListener('click', async () => {
     }
 
     try {
-        const response = await fetch(`http://localhost:5064/landmarks/${currPoint.Id}`, {
+        const response = await fetch(`${apiBaseUrl}/landmarks/${currPoint.Id}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',

@@ -4,6 +4,10 @@ const markersLayer = document.getElementById('markersLayer');
 const mapTitleInput = document.getElementById('mapTitleInput');
 
 let currMapId = null;
+let configResponse = null;
+let config = null;
+let apiBaseUrl = null;
+let s3BaseUrl = null;
 
 class Point {
     constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
@@ -21,9 +25,14 @@ class Point {
 }
 
 //TOUPDATE
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const fileId = urlParams.get('map');
+
+    configResponse = await fetch('./config.json');
+    config = await configResponse.json();
+    apiBaseUrl = config.API_BASE_URL;
+    s3BaseUrl = config.S3_BASE_URL;
 
     if (!fileId) {
         console.error('No file ID in URL!');
@@ -31,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const backendUrl = `http://localhost:5064/maps/public/${fileId}`
+    const backendUrl = `${apiBaseUrl}/maps/public/${fileId}`
     fetch(backendUrl, {
         method: 'GET',
         headers: {
@@ -55,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderPublicData(data) {
     currMapId = data.id;
     mapTitleInput.value = data.title;
-    showMap(data.imagePath);
+    showMap(s3BaseUrl + data.imageName);
 }
 
 //TOUPDATE
@@ -87,7 +96,7 @@ async function showMap(filePath) {
     markersLayer.innerHTML = '';
 
     try {
-        const response = await fetch(`http://localhost:5064/landmarks/map/${currMapId}`, {
+        const response = await fetch(`${apiBaseUrl}/landmarks/map/${currMapId}`, {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -146,7 +155,7 @@ function createMarker(point) {
     if (point.ImagePath != null)
     {
         const labelImg = document.createElement('img');
-        labelImg.src = point.ImagePath;
+        labelImg.src = s3BaseUrl + point.ImageName;
         label.appendChild(labelImg);
     }
 

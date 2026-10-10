@@ -6,6 +6,16 @@ const verificationInput = document.getElementById('verificationInput');
 const registerForm = document.getElementById('registerForm');
 
 let currEmail = null;
+let configResponse = null;
+let config = null;
+let apiBaseUrl = null;
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+    configResponse = await fetch('./config.json');
+    config = await configResponse.json();
+    apiBaseUrl = config.API_BASE_URL;
+});
 
 registerBtn.addEventListener('click', () => {
     container.classList.add("active");
@@ -23,7 +33,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const messageElement = document.getElementById('messageLogin');
 
     try {
-        const response = await fetch('http://localhost:5064/api/auth/login', {
+        const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email: emailLogin, password: passwordLogin})
@@ -64,7 +74,7 @@ registerForm.addEventListener('submit', async (e) => {
 
     try {
         // Отправка запроса на бэкенд
-        const response = await fetch('http://localhost:5064/api/auth/register', {
+        const response = await fetch(`${apiBaseUrl}/api/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -106,7 +116,7 @@ registerForm.addEventListener('submit', async (e) => {
 verificationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     try {
-        const response = await fetch('http://localhost:5064/api/auth/verify-code', {
+        const response = await fetch(`${apiBaseUrl}/api/auth/verify-code`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json' },
             body: JSON.stringify({ email: currEmail, code: verificationInput.value })
