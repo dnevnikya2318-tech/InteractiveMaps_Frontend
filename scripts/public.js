@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const backendUrl = `${apiBaseUrl}/maps/public/${fileId}`
-    fetch(backendUrl, {
+    await fetch(backendUrl, {
         method: 'GET',
         headers: {
             'Accept': 'application/json'

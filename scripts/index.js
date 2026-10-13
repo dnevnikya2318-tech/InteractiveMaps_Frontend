@@ -23,6 +23,10 @@ const token = localStorage.getItem('authToken');
 const putLabelBtn = document.getElementById('putLabelBtn');
 const updateLabelBtn = document.getElementById('updateLabelBtn');
 
+const toggleAccess = document.getElementById('toggleAccess');
+const copyLinkBtn = document.getElementById('copyLinkBtn');
+
+
 let currMapId = null;
 let currMarkImage = null;
 
@@ -35,6 +39,7 @@ let configResponse = null;
 let config = null;
 let apiBaseUrl = null;
 let s3BaseUrl = null;
+let frontBaseUrl = null;
 
 class Point {
     constructor(id, mapId, title, description, x, y, size, markType, imagePath, imageName) {
@@ -56,6 +61,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     config = await configResponse.json();
     apiBaseUrl = config.API_BASE_URL;
     s3BaseUrl = config.S3_BASE_URL;
+    frontBaseUrl = config.FRONT_BASE_URL;
 
     const userInfoElement = document.getElementById('userInfo');
     const logoutBtn = document.getElementById('logoutBtn');
@@ -221,9 +227,9 @@ function createMarker(point) {
 
 dropArea.addEventListener('click', () => fileInput.click());
 
-fileInput.addEventListener('change', () => {
+fileInput.addEventListener('change', async () => {
     if (fileInput.files.length) {
-        uploadMap(fileInput.files[0])
+        await uploadMap(fileInput.files[0]);
     }
 });
 
@@ -245,7 +251,7 @@ dropArea.addEventListener('drop', async (e) => {
     if (e.dataTransfer.files.length) {
         const file = e.dataTransfer.files[0];
 
-        uploadMap(file);
+        await uploadMap(file);
     }
 });
 
@@ -318,8 +324,7 @@ async function showTitle() {
             return;
         }});
 
-    const toggleAccess = document.getElementById('toggleAccess');
-    const copyLinkBtn = document.getElementById('copyLinkBtn');
+    
     
     toggleAccess.style.display = 'flex';
     if(map.isPublic) {
@@ -381,7 +386,7 @@ async function showTitle() {
 
     // Логика копирования в буфер обмена
     copyLinkBtn.addEventListener('click', () => {
-        const textToCopy = `http://127.0.0.1:5533/public.html?map=${currMapId}`;
+        const textToCopy = `${frontBaseUrl}/public.html?map=${currMapId}`;
         navigator.clipboard.writeText(textToCopy).then(() => {
             // Визуальный отклик для пользователя при успешном копировании
             const originalText = copyLinkBtn.textContent;
@@ -411,6 +416,8 @@ function resetMap() {
     viewArea.style.display = 'none';
     mainTitle.style.display = 'block';
     dropArea.style.display = 'flex';
+    toggleAccess.style.display = 'none';
+    copyLinkBtn.classList.remove('show');
 }
 // Возврат к загрузке при клике на "Отмена"
 resetBtn.addEventListener('click', () => resetMap());
@@ -652,7 +659,7 @@ async function uploadMap(file) {
         } catch (error) {
             console.error(error);
         }
-        await showMap(s3BaseUrl + s3Data.ImageName);
+        await showMap(s3BaseUrl + s3Data.imageName);
         await showTitle();
     }
 }

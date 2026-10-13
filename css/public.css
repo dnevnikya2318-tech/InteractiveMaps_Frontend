@@ -11,6 +11,7 @@ body {
     background: rgb(14, 11, 6);
     color: rgb(232, 213, 163);
     font-weight: 400;
+    width: 100%;
 }
 
 .flex .flex-col{
@@ -26,6 +27,8 @@ header{
     align-items: center; 
     justify-content: space-between;
     height: 64px;
+    overflow-x:  auto;
+    min-width: 1870px;
 }
 
 #headerLeft{
@@ -122,13 +125,14 @@ header{
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 40px;
+    padding: 10px;
     gap: 48px;
+    width: 1890px;
 }
 
 #viewArea {
     display: block;
-    width: 99%;
+    width: 100%;
 }
 
 #imageWrapper {
@@ -180,7 +184,7 @@ header{
     border-radius: 4px;
     padding: 2px 6px;
     font-size: 14px;
-    white-space: normal;
+    white-space: pre-wrap;
     width: 50%;
     color: #FFF;
     cursor: context-menu;
@@ -189,6 +193,8 @@ header{
     justify-content: space-evenly;
     align-items: space-evenly;
     z-index: 100;
+    max-height: 75%;
+    overflow-y: auto;
 }
 
 .marker-label hr{
