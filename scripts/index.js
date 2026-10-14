@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Authentification 
     if (!token)
     {
-        window.location.href = '/login/';
+        window.location.href = 'login/';
         return;
     }
 
@@ -93,13 +93,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error('Error occured while reading token:', e);
         localStorage.removeItem('authToken');
-        window.location.href = '/login/';
+        window.location.href = 'login/';
         return;
     }
 
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('authToken');
-        window.location.href = '/login/';
+        window.location.href = 'login/';
     })
 
 })
@@ -545,7 +545,7 @@ const getUserId = (token) => {
     } catch (e) {
         console.error('Error occured while reading token:', e);
         localStorage.removeItem('authToken');
-        window.location.href = '/login/';
+        window.location.href = 'login/';
         return;
     }
 }
