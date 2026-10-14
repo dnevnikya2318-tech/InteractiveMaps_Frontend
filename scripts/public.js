@@ -24,10 +24,10 @@ class Point {
     }
 }
 
-//TOUPDATE
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const fileId = urlParams.get('map');
+    const logoutBtn = document.getElementById('logoutBtn');
 
     configResponse = await fetch('./config.json');
     config = await configResponse.json();
@@ -59,6 +59,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     .catch(error => {
         console.error('Error occured during loading:', error);
     });
+
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('authToken');
+        window.location.href = '../login/';
+    })
 })
 
 function renderPublicData(data) {
@@ -67,7 +72,6 @@ function renderPublicData(data) {
     showMap(s3BaseUrl + data.imageName);
 }
 
-//TOUPDATE
 function hidePopups() {
     const labelPopups = document.querySelectorAll('.marker-label');
     labelPopups.forEach(el => {
