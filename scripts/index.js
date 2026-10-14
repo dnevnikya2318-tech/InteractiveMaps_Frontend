@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Authentification 
     if (!token)
     {
-        window.location.href = 'login.html';
+        window.location.href = 'login/index.html';
         return;
     }
 
@@ -93,13 +93,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (e) {
         console.error('Error occured while reading token:', e);
         localStorage.removeItem('authToken');
-        window.location.href = 'login.html';
+        window.location.href = 'login/index.html';
         return;
     }
 
     logoutBtn.addEventListener('click', () => {
         localStorage.removeItem('authToken');
-        window.location.href = 'login.html';
+        window.location.href = 'login/index.html';
     })
 
 })
@@ -386,7 +386,7 @@ async function showTitle() {
 
     // Логика копирования в буфер обмена
     copyLinkBtn.addEventListener('click', () => {
-        const textToCopy = `${frontBaseUrl}/public.html?map=${currMapId}`;
+        const textToCopy = `${frontBaseUrl}/public/index.html?map=${currMapId}`;
         navigator.clipboard.writeText(textToCopy).then(() => {
             // Визуальный отклик для пользователя при успешном копировании
             const originalText = copyLinkBtn.textContent;
@@ -545,7 +545,7 @@ const getUserId = (token) => {
     } catch (e) {
         console.error('Error occured while reading token:', e);
         localStorage.removeItem('authToken');
-        window.location.href = 'login.html';
+        window.location.href = 'login/index.html';
         return;
     }
 }

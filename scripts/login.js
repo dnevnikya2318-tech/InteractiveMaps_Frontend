@@ -51,7 +51,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         messageElement.style.color = 'green';
         messageElement.innerText = 'Login successful!';
 
-        window.location.href = '/index.html';
+        window.location.href = '../index.html';
     } catch (error) {
         messageElement.innerText = error.message;
     }
@@ -127,7 +127,7 @@ verificationForm.addEventListener('submit', async (e) => {
         if (response.ok) {
             alert(data.message);
             localStorage.setItem('authToken', data.token);
-            window.location.href = '/index.html';
+            window.location.href = '../index.html';
         } else {
             alert(data.message);
             verificationForm.reset();

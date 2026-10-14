@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!fileId) {
         console.error('No file ID in URL!');
-        window.location.href = 'login.html';
+        window.location.href = '../login/index.html';
         return;
     }
 
